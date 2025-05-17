@@ -1,9 +1,9 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import puzzle.Board;
+import model.Board;
 
-public class Driver {
+public class Main {
     public static void main(String[] args) {
         System.out.println("[==========[ Program Berjalan ]==========]");
         // String inputString ="AAA.\n"  +
