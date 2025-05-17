@@ -92,6 +92,13 @@ public class Board {
             }
         }
     }
+
+    /* VALIDITY CHECK */
+    public Boolean haveCoordinate(int row, int col) {
+        return  (row >= 0 && col >= 0)
+                && (this.row < row)
+                && (this.col < col);
+    }
     
     /* BLOCK MANAGEMENT */
     public void addEmptyBlock(Block b) {
@@ -100,6 +107,66 @@ public class Board {
     }
     public void removeEmptyBlocks() {
         this.emptyBlocks.removeIf(b -> !b.isEmpty());
+    }
+
+    /* PIECES MOVEMENT */
+    public ArrayList<Board> movePiece(char tag) {
+        ArrayList<Board> result = new ArrayList<>();
+        Board moveUp = null;
+        Board moveDown = null;
+        Board moveLeft = null;
+        Board moveRight = null;
+        
+        if (this.pieces.get(tag).getDirection() == "VERTICAL" || this.pieces.get(tag).getDirection() == "BOTH") {
+            int colVertical = this.pieces.get(tag).getHead().getCol();
+            int rowUp = this.pieces.get(tag).getHead().getRow() - 1;
+            int rowDown = this.pieces.get(tag).getTail().getRow() + 1;
+
+            // move up
+            if (this.haveCoordinate(rowUp, colVertical)) {
+                moveUp = new Board(this);
+                Block blockUp = moveUp.map.get(rowUp).get(colVertical);
+                moveUp.pieces.get(tag).move(blockUp, moveUp);
+            }
+            // move down
+            if (this.haveCoordinate(rowDown, colVertical)) {
+                moveDown = new Board(this);
+                Block blockDown = moveDown.map.get(rowDown).get(colVertical);
+                moveDown.pieces.get(tag).move(blockDown, moveUp);
+            }
+
+        } else if (this.pieces.get(tag).getDirection() == "HORIZONTAL" || this.pieces.get(tag).getDirection() == "BOTH") {
+            int rowHorizontal = this.pieces.get(tag).getHead().getRow();
+            int colLeft = this.pieces.get(tag).getHead().getCol() - 1;
+            int colRight = this.pieces.get(tag).getTail().getCol() + 1;
+
+            // move left
+            if (this.haveCoordinate(rowHorizontal, colLeft)) {
+                moveLeft = new Board(this);
+                Block blockLeft = moveLeft.map.get(rowHorizontal).get(colLeft);
+                moveLeft.pieces.get(tag).move(blockLeft, moveLeft);
+            }
+            // move right
+            if (this.haveCoordinate(rowHorizontal, colRight)) {
+                moveRight = new Board(this);
+                Block blockRight = moveRight.map.get(rowHorizontal).get(colRight);
+                moveRight.pieces.get(tag).move(blockRight, moveRight);
+            }
+        }
+
+        // check before push
+        if (moveUp != null) result.add(moveUp);
+        if (moveDown != null) result.add(moveDown);
+        if (moveLeft != null) result.add(moveLeft);
+        if (moveRight != null) result.add(moveRight);
+        return result;
+    }
+    public ArrayList<Board> moveAllPieces() {
+        ArrayList<Board> result = new ArrayList<>();
+        for (Character key : this.pieces.keySet()) {
+            result.addAll(this.movePiece(key));
+        }
+        return result;
     }
     
     /* PRINT BOARD */

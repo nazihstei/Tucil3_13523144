@@ -58,38 +58,50 @@ public class Piece {
         this.setDirection();
     }
 
+    /* ADDITONAL GETTER */
+    public Block getHead() {
+        return this.blocks.getFirst();
+    }
+    public Block getTail() {
+        return this.blocks.getLast();
+    }
+    public String getDirection() {
+        return this.direction.name();
+    }
+
     /* MOVEMENT */
     public Boolean canMove(Block b) {
         // conditional preparation
-        Boolean vertical    = (this.direction == Direction.VERTICAL && this.blocks.getFirst().getCol() == b.getCol());
-        Boolean horizontal  = (this.direction == Direction.HORIZONTAL && this.blocks.getFirst().getRow() == b.getRow());
-        Boolean forward     = (this.blocks.getFirst().colDistanceTo(b) == -1 || this.blocks.getFirst().rowDistanceTo(b) == -1);
-        Boolean backward    = (this.blocks.getLast().colDistanceTo(b) == 1 || this.blocks.getLast().rowDistanceTo(b) == 1);
-        return  ((vertical && forward) || (horizontal && forward)) || 
-                ((vertical && backward) || (horizontal && backward));
+        Boolean vertical    = ((this.direction == Direction.VERTICAL || this.direction == Direction.BOTH) && this.getHead().getCol() == b.getCol());
+        Boolean horizontal  = ((this.direction == Direction.HORIZONTAL || this.direction == Direction.BOTH) && this.getHead().getRow() == b.getRow());
+        Boolean forward     = (this.getHead().colDistanceTo(b) == -1 || this.getHead().rowDistanceTo(b) == -1);
+        Boolean backward    = (this.getTail().colDistanceTo(b) == 1 || this.getTail().rowDistanceTo(b) == 1);
+        return  b.isValid() 
+        && (((vertical && forward) || (horizontal && forward)) 
+        || ((vertical && backward) || (horizontal && backward)));
     }
     public void move(Block b, Board B) {
         // validity check
         if (!b.isValid()) return;
-
+        
         // conditional preparation
-        Boolean vertical    = (this.direction == Direction.VERTICAL && this.blocks.getFirst().getCol() == b.getCol());
-        Boolean horizontal  = (this.direction == Direction.HORIZONTAL && this.blocks.getFirst().getRow() == b.getRow());
-        Boolean forward     = (this.blocks.getFirst().colDistanceTo(b) == -1 || this.blocks.getFirst().rowDistanceTo(b) == -1);
-        Boolean backward    = (this.blocks.getLast().colDistanceTo(b) == 1 || this.blocks.getLast().rowDistanceTo(b) == 1);
+        Boolean vertical    = ((this.direction == Direction.VERTICAL || this.direction == Direction.BOTH) && this.getHead().getCol() == b.getCol());
+        Boolean horizontal  = ((this.direction == Direction.HORIZONTAL || this.direction == Direction.BOTH) && this.getHead().getRow() == b.getRow());
+        Boolean forward     = (this.getHead().colDistanceTo(b) == -1 || this.getHead().rowDistanceTo(b) == -1);
+        Boolean backward    = (this.getTail().colDistanceTo(b) == 1 || this.getTail().rowDistanceTo(b) == 1);
         
         // execution
         if ((vertical && forward) || (horizontal && forward)) {
-            b.setTag(this.blocks.getFirst().getTag());
+            b.setTag(this.getHead().getTag());
             this.blocks.addFirst(b);
-            this.blocks.getLast().setTag('.');
+            this.getTail().setTag('.');
             B.addEmptyBlock(b);
             B.removeEmptyBlocks();
             this.blocks.removeLast();
         } else if ((vertical && backward) || (horizontal && backward)) {
-            b.setTag(this.blocks.getFirst().getTag());
+            b.setTag(this.getHead().getTag());
             this.blocks.addLast(b);
-            this.blocks.getFirst().setTag('.');
+            this.getHead().setTag('.');
             B.addEmptyBlock(b);
             B.removeEmptyBlocks();
             this.blocks.removeFirst();
