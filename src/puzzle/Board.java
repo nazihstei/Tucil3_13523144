@@ -10,13 +10,24 @@ public class Board {
     private ArrayList<ArrayList<Block>> map;
     private Block goal;
 
+    /* GETTER */
     public int getRow() {
         return this.row;
     }
     public int getCol() {
         return this.col;
     }
+    public Boolean isIndexValid(int row, int col) {
+        if (row < 0 || row >= this.row) {
+            return false;
+        }
+        if (col < 0 || col >= this.col) {
+            return false;
+        }
+        return this.map.get(row).get(col).isValid();
+    }
 
+    /* CONSTRUCTOR */
     public Board(ArrayList<String> text) {
         this.row = text.size();
         this.col = text.stream().mapToInt(String::length).max().orElse(0);
@@ -62,7 +73,7 @@ public class Board {
         }
     }
 
-    /* Print Board */
+    /* TO STRING */
     public String toString() {
         String result = "";
         for (ArrayList<Block> mapRow : this.map) {
@@ -72,5 +83,32 @@ public class Board {
             result = result + "\n";
         }
         return result;
+    }
+
+    /* PIECES MOVEMENT */
+    public ArrayList<Board> movePiece(char pieceTag) {
+        Piece p = this.pieces.get(pieceTag);
+        switch (p.getDirection()) {
+            case Direction.VERTICAL -> {
+                int pCol = p.getCol();
+                int pRowUp = p.getRow();
+                int pRowDown = p.getRow() + p.getSize() - 1;
+                if (isIndexValid(pRowUp, pCol)) {
+                    if (this.map.get(pRowUp).get(pCol).isEmpty()) {
+                        
+                    }
+                }
+                if (isIndexValid(pRowDown, pCol)) {
+                    if (this.map.get(pRowDown).get(pCol).isEmpty()) {
+
+                    }
+                }
+            }
+            case Direction.HORIZONTAL -> {
+                int pRow = p.getRow();
+                int pColLeft = p.getCol();
+                int pColRigth = p.getCol() + p.getSize() - 1;
+            }
+        }
     }
 }

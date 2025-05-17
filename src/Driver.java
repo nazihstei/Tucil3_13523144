@@ -3,7 +3,7 @@ import java.util.Arrays;
 
 import puzzle.Board;
 
-public class Main {
+public class Driver {
     public static void main(String[] args) {
         System.out.println("[==========[ Program Berjalan ]==========]");
         // String inputString ="AAA.\n"  +

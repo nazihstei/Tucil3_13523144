@@ -1,10 +1,5 @@
 package puzzle;
 
-enum Direction {
-    VERTICAL,
-    HORIZONTAL
-}
-
 public class Piece {
     private char tag;
     private int row;
@@ -12,6 +7,24 @@ public class Piece {
     private int size;
     private Direction direction;
 
+    /* GETTER */
+    public char getTag(){
+        return this.tag;
+    }
+    public int getRow() {
+        return this.row;
+    }
+    public int getCol() {
+        return this.col;
+    }
+    public int getSize() {
+        return this.size;
+    }
+    public Direction getDirection() {
+        return this.direction;
+    }
+
+    /* CONSTRUCTOR */
     public Piece(char tag, int row, int col, int size, Direction dir) {
         this.tag = tag;
         this.row = row;
@@ -20,8 +33,16 @@ public class Piece {
         this.direction = dir;
     }
 
-    public Boolean isValidPosition() {
-        return true;
-        // nanti diganti
+    /* MOVEMENT */
+    public void putOn(Board b) {
+
     }
+    public void moveUp(Board b) {
+        if (this.direction == Direction.HORIZONTAL) {
+            return;
+        }
+        this.row++;
+        b.
+    }
+
 }
