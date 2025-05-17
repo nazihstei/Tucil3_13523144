@@ -73,8 +73,7 @@ public class Block {
 
     /* PRINT BLOCK */
     public String toString() {
-        return ("(" + this.tag + ": " + this.row + ", " + this.col + ")");
+        return String.format("(%c: %d, %d)", this.tag, this.row, this.col);
     }
-
 
 }

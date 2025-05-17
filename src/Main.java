@@ -1,28 +1,37 @@
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Scanner;
 
-import model.Board;
+import model.*;
+import utils.*;
 
 public class Main {
-    public static void main(String[] args) {
-        System.out.println("[==========[ Program Berjalan ]==========]");
-        // String inputString ="AAA.\n"  +
-        //                     "..B.\n"  +
-        //                     "PPB.K\n" +
-        //                     "CCC.";
-        // String inputString ="   K  \n" +
-        //                     ".AAPB.\n" +
-        //                     ".D.PB.\n" +
-        //                     ".D.CCC\n" +
-        //                     "......";
-        String inputString =" ....\n" +
-                            "KA.PP\n" +
-                            " A..C\n" +
-                            " BB.C\n" +
-                            " .DDD";
-        ArrayList<String> input = new ArrayList<>(Arrays.asList(inputString.split("\n")));
-        Board testBoard = new Board(input);
-        System.out.println(testBoard);
-        System.out.println("[==========[ Program Selesai. ]==========]");
+    public static void main(String[] args) throws InterruptedException {
+        Scanner input = new Scanner(System.in);
+
+        Terminal.clearScreen();
+        System.out.println();
+        System.out.println("[=====================================================]");
+        System.out.println("[============[  Rush Hour Solver Master  ]============]");
+        System.out.println("[=====================================================]");
+        System.out.println("[  Selamat datang di Solver permainan Rush Hour no.1  ]");
+        System.out.println("[  di dunia. Terdapat pilihan algoritma keren dengan  ]");
+        System.out.println("[  pilihan heuristik yang menarik. Selamat mencoba!   ]");
+        System.out.println("[=====================================================]");
+        System.out.println();
+        Board rootBoard = null;
+        while (rootBoard == null) {
+            System.out.println("[*] Silahkan masukkan file konfigurasi");
+            System.out.print  ("    >> ");
+            String filepath = input.nextLine();
+            System.out.println("[*] Memuat konfigurasi ...");
+            System.out.print("    ");
+            rootBoard = FileHandler.loadFile(filepath);
+            System.out.println();
+        }
+        Thread.sleep(2000);
+        System.out.println("[*] Konfigurasi berhasil dimuat!");
+        System.out.println();
+        System.out.println("[=====================================================]");
+        
+        input.close();
     }
 }

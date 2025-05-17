@@ -99,9 +99,7 @@ public class Piece {
 
     /* PRINT PIECE */
     public String toString() {
-        String result = "";
-        result = result + "[" + this.direction + "] "
-                + this.tag + " :";
+        String result = String.format("[%s] %c : ", this.direction, this.tag);
         for (Block blok : this.blocks) {
             result = result + " " + blok.toString();
         }
