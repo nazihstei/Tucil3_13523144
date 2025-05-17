@@ -41,7 +41,7 @@ public class BoardTree {
         if (b == null) return;
         this.branches.add(new BoardTree(b, this));
     }
-    public void addBranch(Collection<Board> data) {
+    public void addBranches(Collection<Board> data) {
         if (data == null) return;
         for (Board b : data) {
             this.addBranch(b);
@@ -54,5 +54,11 @@ public class BoardTree {
     }
     public Boolean isLeaf() {
         return this.branches.size() == 0;
+    }
+
+    /* GENERATE BRANCHES */
+    public void generateBranches() {
+        ArrayList<Board> nextMovement = this.node.moveAllPieces();
+        this.addBranches(nextMovement);
     }
 }
