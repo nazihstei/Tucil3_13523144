@@ -59,6 +59,9 @@ public class Block {
     public Boolean isPiece() {
         return this.isValid() && !(this.isEmpty() || this.isExit());
     }
+    public Boolean isPrimary() {
+        return this.tag == 'P';
+    }
 
     /* DISTANCE OPERATION */
     public int rowDistanceTo(Block b) {

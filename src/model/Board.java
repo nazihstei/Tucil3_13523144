@@ -10,7 +10,7 @@ public class Board {
     private int col;
     private HashMap<Character, Piece> pieces;
     private ArrayList<ArrayList<Block>> map;
-    private ArrayList<Block> emptyBlocks;
+    // private ArrayList<Block> emptyBlocks;
     private Block goal;
     
     /* CONSTRUCTOR */
@@ -20,7 +20,7 @@ public class Board {
         this.col = text.stream().mapToInt(String::length).max().orElse(0);
         this.pieces = new HashMap<>();
         this.map = new ArrayList<>();
-        this.emptyBlocks = new ArrayList<>();
+        // this.emptyBlocks = new ArrayList<>();
         
         // set pieces and map
         for (int i=0; i<this.row; i++) {
@@ -49,10 +49,10 @@ public class Board {
                 if (addedBlock.isExit()) {
                     this.goal = addedBlock;
                 }
-                // add empties
-                if (addedBlock.isEmpty()) {
-                    this.emptyBlocks.add(addedBlock);
-                }
+                // // add empties
+                // if (addedBlock.isEmpty()) {
+                //     this.emptyBlocks.add(addedBlock);
+                // }
             }
         }
     }
@@ -63,7 +63,7 @@ public class Board {
         this.col = b.col;
         this.pieces = new HashMap<>();
         this.map = new ArrayList<>();
-        this.emptyBlocks = new ArrayList<>();
+        // this.emptyBlocks = new ArrayList<>();
         
         // set pieces and map
         for (int i=0; i<this.row; i++) {
@@ -85,10 +85,10 @@ public class Board {
                 if (addedBlock.isExit()) {
                     this.goal = addedBlock;
                 }
-                // add empties
-                if (addedBlock.isEmpty()) {
-                    this.emptyBlocks.add(addedBlock);
-                }
+                // // add empties
+                // if (addedBlock.isEmpty()) {
+                //     this.emptyBlocks.add(addedBlock);
+                // }
             }
         }
     }
@@ -99,15 +99,45 @@ public class Board {
                 && (this.row < row)
                 && (this.col < col);
     }
+    public Boolean isExitValid() {
+        return  (this.goal.getRow()<=0 && this.goal.getCol()<=0) ||
+                (this.goal.getRow()<=0 && this.goal.getCol()>=this.col-1) ||
+                (this.goal.getRow()>=this.row-1 && this.goal.getCol()<=0) ||
+                (this.goal.getRow()>=this.row-1 && this.goal.getCol()>=this.col-1);
+    }
+    public Boolean isSolved() {
+        if (!this.isExitValid()) return false;
+        int goalRow = this.goal.getRow();
+        int goalCol = this.goal.getCol();
+        Block checkedBlock = null;
+        Boolean isFit = false;
+        if (goalRow==0) {
+            checkedBlock = this.map.get(goalRow + 1).get(goalCol);
+            isFit = this.pieces.get('P').getDirection() == "VERTICAL";
+        }
+        if (goalCol==0) {
+            checkedBlock = this.map.get(goalRow).get(goalCol + 1);
+            isFit = this.pieces.get('P').getDirection() == "HORIZONTAL";
+        }
+        if (goalRow==this.row-1) {
+            checkedBlock = this.map.get(goalRow - 1).get(goalCol);
+            isFit = this.pieces.get('P').getDirection() == "VERTICAL";
+        }
+        if (goalCol==this.col-1) {
+            checkedBlock = this.map.get(goalRow).get(goalCol - 1);
+            isFit = this.pieces.get('P').getDirection() == "HORIZONTAL";
+        }
+        return checkedBlock.isPrimary() && isFit;
+    }
     
     /* BLOCK MANAGEMENT */
-    public void addEmptyBlock(Block b) {
-        if (!b.isEmpty()) return;
-        this.emptyBlocks.add(b);
-    }
-    public void removeEmptyBlocks() {
-        this.emptyBlocks.removeIf(b -> !b.isEmpty());
-    }
+    // public void addEmptyBlock(Block b) {
+    //     if (!b.isEmpty()) return;
+    //     this.emptyBlocks.add(b);
+    // }
+    // public void removeEmptyBlocks() {
+    //     this.emptyBlocks.removeIf(b -> !b.isEmpty());
+    // }
 
     /* PIECES MOVEMENT */
     public ArrayList<Board> movePiece(char tag) {
