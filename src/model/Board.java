@@ -3,6 +3,8 @@ package model;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import model.Piece.Direction;
+
 public class Board {
     
     /* ATTRIBUTE */
@@ -130,19 +132,19 @@ public class Board {
         Boolean isFit = false;
         if (goalRow==0) {
             checkedBlock = this.map.get(goalRow + 1).get(goalCol);
-            isFit = this.pieces.get('P').getDirection() == "VERTICAL";
+            isFit = this.pieces.get('P').getDirection().equals(Direction.VERTICAL);
         }
         if (goalCol==0) {
             checkedBlock = this.map.get(goalRow).get(goalCol + 1);
-            isFit = this.pieces.get('P').getDirection() == "HORIZONTAL";
+            isFit = this.pieces.get('P').getDirection().equals(Direction.HORIZONTAL);
         }
         if (goalRow==this.row-1) {
             checkedBlock = this.map.get(goalRow - 1).get(goalCol);
-            isFit = this.pieces.get('P').getDirection() == "VERTICAL";
+            isFit = this.pieces.get('P').getDirection().equals(Direction.VERTICAL);
         }
         if (goalCol==this.col-1) {
             checkedBlock = this.map.get(goalRow).get(goalCol - 1);
-            isFit = this.pieces.get('P').getDirection() == "HORIZONTAL";
+            isFit = this.pieces.get('P').getDirection().equals(Direction.HORIZONTAL);
         }
         return checkedBlock.isPrimary() && isFit;
     }
@@ -155,7 +157,10 @@ public class Board {
         Board moveLeft = null;
         Board moveRight = null;
         
-        if (this.pieces.get(tag).getDirection() == "VERTICAL" || this.pieces.get(tag).getDirection() == "BOTH") {
+        if (
+            this.pieces.get(tag).getDirection().equals(Direction.VERTICAL) || 
+            this.pieces.get(tag).getDirection().equals(Direction.BOTH)
+            ) {
             int colVertical = this.pieces.get(tag).getHead().getCol();
             int rowUp = this.pieces.get(tag).getHead().getRow() - 1;
             int rowDown = this.pieces.get(tag).getTail().getRow() + 1;
@@ -177,7 +182,10 @@ public class Board {
                 moveDown.moveDirection = "DOWN";
             }
             
-        } else if (this.pieces.get(tag).getDirection() == "HORIZONTAL" || this.pieces.get(tag).getDirection() == "BOTH") {
+        } else if (
+                this.pieces.get(tag).getDirection().equals(Direction.HORIZONTAL) || 
+                this.pieces.get(tag).getDirection().equals(Direction.BOTH)
+                ) {
             int rowHorizontal = this.pieces.get(tag).getHead().getRow();
             int colLeft = this.pieces.get(tag).getHead().getCol() - 1;
             int colRight = this.pieces.get(tag).getTail().getCol() + 1;
@@ -217,7 +225,7 @@ public class Board {
     
     /* PRINT BOARD */
     public String toString() {
-        String result = String.format("[ %c ] %s", this.moveTag, this.moveDirection);
+        String result = String.format("[ %c ] %s\n", this.moveTag, this.moveDirection);
         for (ArrayList<Block> mapRow : this.map) {
             for (Block blok : mapRow) {
                 result = result + blok.getTag() + " ";

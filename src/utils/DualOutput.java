@@ -3,20 +3,23 @@ package utils;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
+import java.util.Scanner;
 
 public class DualOutput {
 
     private static PrintStream originalOut = System.out;
     private static PrintStream fileOut = null;
     private static PrintStream dualOut = null;
+    private static boolean isActive = false;
 
     public static void activate(String filePath) {
-        if (dualOut == null) {
+        if (!isActive) {
             try {
-                FileOutputStream fileOutputStream = new FileOutputStream(filePath, true); // Append ke file
+                FileOutputStream fileOutputStream = new FileOutputStream(filePath, true);
                 fileOut = new PrintStream(fileOutputStream);
                 dualOut = new PrintStream(new DualOutputStream(originalOut, fileOut));
                 System.setOut(dualOut);
+                isActive = true;
                 System.out.println("[DualOutput] Dual output activated. Logging to console and: " + filePath);
             } catch (FileNotFoundException e) {
                 System.err.println("[DualOutput] Error activating dual output: " + e.getMessage());
@@ -27,20 +30,20 @@ public class DualOutput {
     }
 
     public static void deactivate() {
-        if (dualOut != null) {
+        if (isActive) {
             System.setOut(originalOut);
             if (fileOut != null) {
                 fileOut.close();
             }
             dualOut = null;
             fileOut = null;
+            isActive = false;
             System.out.println("[DualOutput] Dual output deactivated.");
         } else {
             System.out.println("[DualOutput] Dual output is not active.");
         }
     }
 
-    // Kelas pembantu untuk menggabungkan dua OutputStream
     private static class DualOutputStream extends java.io.OutputStream {
         private java.io.OutputStream one;
         private java.io.OutputStream two;
@@ -64,25 +67,30 @@ public class DualOutput {
 
         @Override
         public void close() throws java.io.IOException {
-            // Jangan menutup originalOut (System.out)
             two.close();
         }
     }
 
     public static void main(String[] args) {
-        System.out.println("Output sebelum aktivasi.");
+        System.out.println("Mulai program dengan dual output.");
+        DualOutput.activate("input_output.log");
 
-        // Mengaktifkan dual output ke file "log.txt"
-        DualOutput.activate("log.txt");
+        Scanner scanner = new Scanner(System.in);
+        String input;
 
-        System.out.println("Output setelah aktivasi - akan muncul di terminal dan log.txt.");
-        int angka = 789;
-        System.out.printf("Nilai angka: %d\n", angka);
-        System.err.println("Ini juga akan masuk ke log file (jika System.err tidak dialihkan).");
+        System.out.println("Masukkan teks (ketik 'exit' untuk keluar):");
 
-        // Menonaktifkan dual output
+        while (true) {
+            input = scanner.nextLine();
+            System.out.println("Input pengguna: " + input); // Ini akan masuk ke terminal dan log
+
+            if (input.equalsIgnoreCase("exit")) {
+                break;
+            }
+        }
+
+        scanner.close();
         DualOutput.deactivate();
-
-        System.out.println("Output setelah deaktivasi - hanya akan muncul di terminal.");
+        System.out.println("Program selesai.");
     }
 }

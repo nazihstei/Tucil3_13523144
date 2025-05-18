@@ -65,8 +65,8 @@ public class Piece {
     public Block getTail() {
         return this.blocks.getLast();
     }
-    public String getDirection() {
-        return this.direction.name();
+    public Direction getDirection() {
+        return this.direction;
     }
 
     /* BLOCK ACCESS */

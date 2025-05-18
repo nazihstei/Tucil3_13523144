@@ -15,10 +15,10 @@ public class FileHandler {
         Path path = Paths.get(filepath);
         try {
             List<String> tempList = Files.readAllLines(path);
-            ArrayList<String> fileRows = new ArrayList<>(tempList.subList(1, tempList.size()));
+            ArrayList<String> fileRows = new ArrayList<>(tempList.subList(2, tempList.size()));
             return new Board(fileRows);
         } catch (IOException e) {
-            System.err.println("Terjadi kesalahan saat membaca file: " + e.getMessage());
+            System.err.println("[X] Terjadi kesalahan saat membaca file: " + e.getMessage());
             return null;
         }
     }
