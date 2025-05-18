@@ -11,10 +11,16 @@ public class Algorithm {
     /* ATTRIBUTE */
     protected BoardTree tree;
     protected PriorityQueue<BoardTree> queue;
+    protected ArrayList<Board> soulution;
 
     /* CONSTRUCTOR */
     public Algorithm(Board b) {
         this.tree = new BoardTree(b);
+    }
+
+    /* GETTER */
+    public BoardTree getTree() {
+        return this.tree;
     }
 
     /* SOLVER */
@@ -38,6 +44,7 @@ public class Algorithm {
             result.addFirst(node.getNode());
             node = node.getRoot();
         }
+        this.soulution = result;
         return result;
     }
     public void solver(BoardTree b) {
@@ -58,6 +65,13 @@ public class Algorithm {
 
     /* PRINT RESULT */
     public String toString() {
-        return "";
+        if (this.soulution == null) return "";
+        String result = "";
+        
+        for (Board step : this.soulution) {
+            result = result + String.format("Gerakan %d : %s", this.soulution.indexOf(step), step.toString());
+        }
+        
+        return result;
     }
 }

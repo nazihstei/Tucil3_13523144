@@ -26,10 +26,10 @@ public class CombinedHeuristic extends Heuristic{
             this.heuristic.add(h[i]);
         }
         switch (mode) {
-            case "MAX" -> {this.mode = HEURISTIC_TYPE.MAX;}
-            case "MIN" -> {this.mode = HEURISTIC_TYPE.MIN;}
-            case "SUM" -> {this.mode = HEURISTIC_TYPE.SUM;}
-            case "AVG" -> {this.mode = HEURISTIC_TYPE.AVG;}
+            case "MAX" -> {this.mode = HEURISTIC_TYPE.MAX; break;}
+            case "MIN" -> {this.mode = HEURISTIC_TYPE.MIN; break;}
+            case "SUM" -> {this.mode = HEURISTIC_TYPE.SUM; break;}
+            case "AVG" -> {this.mode = HEURISTIC_TYPE.AVG; break;}
         }
     }
 

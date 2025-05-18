@@ -48,6 +48,19 @@ public class BoardTree {
         this.node = b;
     }
 
+    /* NODE COUNT */
+    public long nodeCount() {
+        long temp = 0;
+        for (BoardTree branch : this.branches) {
+            temp += branch.nodeCount();
+        }
+        if (this.isRoot()) {   
+            return 1 + this.branches.size() + temp;
+        } else {
+            return this.branches.size() + temp;
+        }
+    }
+
     /* BRANCHES */
     public void addBranch(Board b) {
         if (b == null) return;
