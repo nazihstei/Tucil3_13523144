@@ -10,6 +10,7 @@ public class BoardTree {
     private Board node;
     private ArrayList<BoardTree> branches;
     private long depth;
+    private static ArrayList<BoardTree> leaves;
 
     /* CONSTRUCTOR */
     public BoardTree(Board node) {
@@ -17,20 +18,31 @@ public class BoardTree {
         this.node = node;
         this.depth = 0;
         this.branches = new ArrayList<>();
+        BoardTree.leaves = new ArrayList<>();
     }
     public BoardTree(Board node, BoardTree root) {
         this.root = root;
         this.node = node;
         this.depth = root.getDepth() + 1;
         this.branches = new ArrayList<>();
+        BoardTree.leaves.add(this);
     }
 
     /* GETTER and SETTER */
+    public BoardTree getRoot() {
+        return this.root;
+    }
     public long getDepth() {
         return this.depth;
     }
     public Board getNode() {
         return this.node;
+    }
+    public ArrayList<BoardTree> getBranches() {
+        return this.branches;
+    }
+    public static ArrayList<BoardTree> getLeaves() {
+        return BoardTree.leaves;
     }
     public void setNode(Board b) {
         this.node = b;
@@ -40,6 +52,7 @@ public class BoardTree {
     public void addBranch(Board b) {
         if (b == null) return;
         this.branches.add(new BoardTree(b, this));
+        BoardTree.leaves.remove(this);
     }
     public void addBranches(Collection<Board> data) {
         if (data == null) return;
