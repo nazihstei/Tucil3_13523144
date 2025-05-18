@@ -10,8 +10,9 @@ public class Board {
     private int col;
     private HashMap<Character, Piece> pieces;
     private ArrayList<ArrayList<Block>> map;
-    // private ArrayList<Block> emptyBlocks;
     private Block goal;
+    private char moveTag;
+    private String moveDirection;
     
     /* CONSTRUCTOR */
     public Board(ArrayList<String> text) {
@@ -20,7 +21,8 @@ public class Board {
         this.col = text.stream().mapToInt(String::length).max().orElse(0);
         this.pieces = new HashMap<>();
         this.map = new ArrayList<>();
-        // this.emptyBlocks = new ArrayList<>();
+        this.moveTag = '\0';
+        this.moveDirection = "";
         
         // set pieces and map
         for (int i=0; i<this.row; i++) {
@@ -49,10 +51,6 @@ public class Board {
                 if (addedBlock.isExit()) {
                     this.goal = addedBlock;
                 }
-                // // add empties
-                // if (addedBlock.isEmpty()) {
-                //     this.emptyBlocks.add(addedBlock);
-                // }
             }
         }
     }
@@ -63,7 +61,8 @@ public class Board {
         this.col = b.col;
         this.pieces = new HashMap<>();
         this.map = new ArrayList<>();
-        // this.emptyBlocks = new ArrayList<>();
+        this.moveTag = b.moveTag;
+        this.moveDirection = b.moveDirection;
         
         // set pieces and map
         for (int i=0; i<this.row; i++) {
@@ -85,10 +84,6 @@ public class Board {
                 if (addedBlock.isExit()) {
                     this.goal = addedBlock;
                 }
-                // // add empties
-                // if (addedBlock.isEmpty()) {
-                //     this.emptyBlocks.add(addedBlock);
-                // }
             }
         }
     }
@@ -129,15 +124,6 @@ public class Board {
         }
         return checkedBlock.isPrimary() && isFit;
     }
-    
-    /* BLOCK MANAGEMENT */
-    // public void addEmptyBlock(Block b) {
-    //     if (!b.isEmpty()) return;
-    //     this.emptyBlocks.add(b);
-    // }
-    // public void removeEmptyBlocks() {
-    //     this.emptyBlocks.removeIf(b -> !b.isEmpty());
-    // }
 
     /* PIECES MOVEMENT */
     public ArrayList<Board> movePiece(char tag) {
@@ -157,30 +143,38 @@ public class Board {
                 moveUp = new Board(this);
                 Block blockUp = moveUp.map.get(rowUp).get(colVertical);
                 moveUp.pieces.get(tag).move(blockUp, moveUp);
+                moveUp.moveTag = tag;
+                moveUp.moveDirection = "UP";
             }
             // move down
             if (this.haveCoordinate(rowDown, colVertical)) {
                 moveDown = new Board(this);
                 Block blockDown = moveDown.map.get(rowDown).get(colVertical);
                 moveDown.pieces.get(tag).move(blockDown, moveUp);
+                moveDown.moveTag = tag;
+                moveDown.moveDirection = "DOWN";
             }
-
+            
         } else if (this.pieces.get(tag).getDirection() == "HORIZONTAL" || this.pieces.get(tag).getDirection() == "BOTH") {
             int rowHorizontal = this.pieces.get(tag).getHead().getRow();
             int colLeft = this.pieces.get(tag).getHead().getCol() - 1;
             int colRight = this.pieces.get(tag).getTail().getCol() + 1;
-
+            
             // move left
             if (this.haveCoordinate(rowHorizontal, colLeft)) {
                 moveLeft = new Board(this);
                 Block blockLeft = moveLeft.map.get(rowHorizontal).get(colLeft);
                 moveLeft.pieces.get(tag).move(blockLeft, moveLeft);
+                moveLeft.moveTag = tag;
+                moveLeft.moveDirection = "LEFT";
             }
             // move right
             if (this.haveCoordinate(rowHorizontal, colRight)) {
                 moveRight = new Board(this);
                 Block blockRight = moveRight.map.get(rowHorizontal).get(colRight);
                 moveRight.pieces.get(tag).move(blockRight, moveRight);
+                moveRight.moveTag = tag;
+                moveRight.moveDirection = "RIGHT";
             }
         }
 
@@ -201,7 +195,7 @@ public class Board {
     
     /* PRINT BOARD */
     public String toString() {
-        String result = "";
+        String result = String.format("[ %c ] %s", this.moveTag, this.moveDirection);
         for (ArrayList<Block> mapRow : this.map) {
             for (Block blok : mapRow) {
                 result = result + blok.getTag() + " ";

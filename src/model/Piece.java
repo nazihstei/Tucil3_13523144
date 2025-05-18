@@ -95,15 +95,11 @@ public class Piece {
             b.setTag(this.getHead().getTag());
             this.blocks.addFirst(b);
             this.getTail().setTag('.');
-            // B.addEmptyBlock(b);
-            // B.removeEmptyBlocks();
             this.blocks.removeLast();
         } else if ((vertical && backward) || (horizontal && backward)) {
             b.setTag(this.getHead().getTag());
             this.blocks.addLast(b);
             this.getHead().setTag('.');
-            // B.addEmptyBlock(b);
-            // B.removeEmptyBlocks();
             this.blocks.removeFirst();
         }
         
