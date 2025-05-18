@@ -13,6 +13,25 @@ public class Board {
     private Block goal;
     private char moveTag;
     private String moveDirection;
+
+    /* GETTER */
+    public Piece getPrimaryPiece() {
+        return this.pieces.get('P');
+    }
+    public Block getGoal() {
+        return this.goal;
+    }
+    public ArrayList<ArrayList<Block>> getcopyMap() {
+        ArrayList<ArrayList<Block>> result = new ArrayList<>();
+        for (ArrayList<Block> mapRow : this.map) {
+            ArrayList<Block> newMapRow = new ArrayList<>();
+            for (Block blok : mapRow) {
+                newMapRow.add(new Block(blok));
+            }
+            result.add(newMapRow);
+        }
+        return result;
+    }
     
     /* CONSTRUCTOR */
     public Board(ArrayList<String> text) {

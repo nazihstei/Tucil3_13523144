@@ -73,6 +73,9 @@ public class Block {
     public Double euclideanDistanceTo(Block b) {
         return Math.sqrt(Math.pow(this.rowDistanceTo(b), 2) + Math.pow(this.colDistanceTo(b), 2));
     }
+    public int ManhattanDistance(Block b) {
+        return Math.abs(this.row - b.row) + Math.abs(this.col - b.col);
+    }
 
     /* PRINT BLOCK */
     public String toString() {

@@ -28,8 +28,8 @@ class ASTARcomparator implements IRoutePlanning {
 
     /* COMPARATOR ALGORITHM: f(n) = g(n) + h(n) */
     public int compare(BoardTree b1, BoardTree b2) {
-        Double f1 = Algorithm.g(b1) + this.h.calculate(b1);
-        Double f2 = Algorithm.g(b2) + this.h.calculate(b2);
+        Double f1 = Algorithm.g(b1) + this.h.calculate(b1.getNode());
+        Double f2 = Algorithm.g(b2) + this.h.calculate(b2.getNode());
         return (int) ((f1 - f2)/Math.abs(f1 - f2));
     }
 

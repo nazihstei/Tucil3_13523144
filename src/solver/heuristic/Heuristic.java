@@ -1,10 +1,10 @@
 package solver.heuristic;
 
-import model.BoardTree;
+import model.Board;
 
 public abstract class Heuristic {
     
-    /* ABSTRACT METHOD */
-    public abstract Double calculate(BoardTree b);
+    /* METHOD */
+    public abstract Double calculate(Board b);
 
 }

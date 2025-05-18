@@ -66,7 +66,7 @@ class BNBcomparator implements IRoutePlanning {
         if (this.h == null) {
             h = 0.0;
         } else {
-            h = this.h.calculate(b);
+            h = this.h.calculate(b.getNode());
         }
         g = Algorithm.g(b);
         return g + h;
