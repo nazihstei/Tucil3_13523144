@@ -69,16 +69,44 @@ public class Piece {
         return this.direction.name();
     }
 
+    /* BLOCK ACCESS */
+    public Block nextForward(Board b) {
+        try {
+            if (this.direction == Direction.VERTICAL || this.direction == Direction.BOTH) {
+                Block head = this.getHead();
+                return b.getMap().get(head.getRow()-1).get(head.getCol());
+            } else {
+                Block tail = this.getTail();
+                return b.getMap().get(tail.getRow()).get(tail.getCol()+1);
+            }
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    public Block nextBackward(Board b) {
+        try {
+            if (this.direction == Direction.VERTICAL || this.direction == Direction.BOTH) {
+                Block tail = this.getTail();
+                return b.getMap().get(tail.getRow()+1).get(tail.getCol());
+            } else {
+                Block head = this.getHead();
+                return b.getMap().get(head.getRow()).get(head.getCol()-1);
+            }
+        } catch (Exception e) {
+            return null;
+        }    
+    }
+
     /* MOVEMENT */
     public Boolean canMove(Block b) {
         // conditional preparation
+        if (!b.isValid()) return false;
         Boolean vertical    = ((this.direction == Direction.VERTICAL || this.direction == Direction.BOTH) && this.getHead().getCol() == b.getCol());
         Boolean horizontal  = ((this.direction == Direction.HORIZONTAL || this.direction == Direction.BOTH) && this.getHead().getRow() == b.getRow());
         Boolean forward     = (this.getHead().colDistanceTo(b) == -1 || this.getHead().rowDistanceTo(b) == -1);
         Boolean backward    = (this.getTail().colDistanceTo(b) == 1 || this.getTail().rowDistanceTo(b) == 1);
-        return  b.isValid() 
-        && (((vertical && forward) || (horizontal && forward)) 
-        || ((vertical && backward) || (horizontal && backward)));
+        return  (((vertical && forward) || (horizontal && forward)) 
+                || ((vertical && backward) || (horizontal && backward)));
     }
     public void move(Block b, Board B) {
         // validity check

@@ -32,6 +32,9 @@ public class Board {
         }
         return result;
     }
+    public ArrayList<ArrayList<Block>> getMap() {
+        return this.map;
+    }
     
     /* CONSTRUCTOR */
     public Board(ArrayList<String> text) {
@@ -223,6 +226,30 @@ public class Board {
             result = result + "\n";
         }
         if (result.length() > 1) result = result.substring(0, result.length()-1);
+        return result;
+    }
+
+    /* ADDITIONAL */
+    public ArrayList<Piece> getBlockingPieces() {
+        ArrayList<Piece> result = new ArrayList<>();
+        ArrayList<Block> line = new ArrayList<>();
+        if (this.goal.getCol()==0 || this.goal.getCol()==this.col-1) {
+            line = this.map.get(this.goal.getRow());
+        }
+        if (this.goal.getRow()==0 || this.goal.getRow()==this.row-1) {
+            for (int i=0; i<this.row; i++) {
+                line.add(this.map.get(i).get(this.goal.getCol()));
+            }
+        }
+        if (line.getLast().isExit()) {
+            line = new ArrayList<>(line.reversed());
+        }
+        for (Block blok : line) {
+            if (!blok.isPiece()) continue;
+            if (blok.isPrimary()) break;
+            if (result.contains(this.pieces.get(blok.getTag()))) continue;
+            result.add(this.pieces.get(blok.getTag()));
+        }
         return result;
     }
 }

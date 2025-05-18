@@ -5,6 +5,8 @@ import model.Board;
 import model.Piece;
 
 public class DistanceToExit extends Heuristic {
+
+    /* Menghitung jarak dari Primary ke Exit */
     
     /* METHOD */
     public Double calculate(Board b) {
