@@ -31,6 +31,7 @@ public class Algorithm {
     public ArrayList<Board> solve() {
         Boolean hasSolution = this.solver();
         if (hasSolution == false) {
+            System.err.println("DON'T HAVE SOLUTION");
             return null;
         }
 
@@ -45,6 +46,16 @@ public class Algorithm {
                 }
             }
         }
+
+        if (goal == null) {
+            System.err.println("GOAL RESULT IS NULL");
+            try {
+               Thread.sleep(10000);
+           } catch (InterruptedException e) {
+               e.printStackTrace();
+           }
+        }
+
         // tracing to root
         ArrayList<Board> result = new ArrayList<>();
         BoardTree node = goal;
@@ -52,6 +63,7 @@ public class Algorithm {
             result.addFirst(node.getNode());
             node = node.getRoot();
         }
+        result.addFirst(this.tree.getNode());
         this.solution = result;
         return result;
     }
@@ -68,8 +80,9 @@ public class Algorithm {
         while (!this.queue.isEmpty()) {
             b = this.queue.poll();
 
-            // System.out.println(b.getNode());
-            // System.out.println();
+            System.out.println("depth: " + b.getDepth());
+            System.out.println(b.getNode());
+            System.out.println();
 
             if (b.getNode().isSolved()) {
                 break;
@@ -90,7 +103,7 @@ public class Algorithm {
                 }
                 if (found) branches.remove(node);
             }
-
+            this.trash.add(b);
             this.queue.addAll(branches);
         }
         return b.getNode().isSolved();
@@ -103,11 +116,34 @@ public class Algorithm {
 
     /* PRINT RESULT */
     public String toString() {
-        if (this.solution == null) return "";
+        if (this.solution == null) {
+            System.err.println("ERROR: SOLUTION IS NULL");
+            try {
+                Thread.sleep(10000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        if (this.solution.size() == 0) {
+            System.err.println("ERROR: SOLUTION IS EMPTY");
+            try {
+                Thread.sleep(10000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        if (this.tree == null) {
+            System.err.println("ERROR: TREE IS NULL");
+            try {
+                Thread.sleep(10000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
         String result = "";
         
         for (Board step : this.solution) {
-            result = result + String.format("Gerakan %d :\n%s", this.solution.indexOf(step), step.toString());
+            result = result + String.format("\n\nGerakan %d :\n%s", this.solution.indexOf(step), step.toString());
         }
         
         return result;

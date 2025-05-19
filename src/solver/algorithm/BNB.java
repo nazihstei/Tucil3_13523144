@@ -30,6 +30,7 @@ public class BNB extends Algorithm {
     /* SOLVER */
     @Override
     public Boolean solver() {
+        Boolean solved = false;
         if (this.tree == null) {
             return false;
         }
@@ -42,14 +43,18 @@ public class BNB extends Algorithm {
         while (!this.queue.isEmpty()) {
             b = this.queue.poll();
             b.generateBranches();
+            ArrayList<BoardTree> branches = b.getBranches();
             
-            // update best cost
-            if (b.isRoot()) {
-                ArrayList<BoardTree> branches = b.getBranches();
-                this.queue.addAll(branches);
-            } else {
-                this.bestCost = this.comparator.COST(b);
-                ArrayList<BoardTree> branches = b.getBranches();
+            System.out.println("depth: " + b.getDepth());
+            System.out.println(b.getNode());
+            System.out.println();
+
+            if (b.getNode().isSolved()) {
+                solved = true;
+                break;
+            }
+
+            if (!b.isRoot()) {
                 
                 // filter
                 for (int i = 0; i<branches.size(); i++) {
@@ -67,8 +72,14 @@ public class BNB extends Algorithm {
                 
                 branches.stream().filter(node -> this.comparator.COST(node) <= this.bestCost);
             }
+            // update best cost
+            this.trash.add(b);
+            this.queue.addAll(branches);
+            if (!this.queue.isEmpty()) {
+                this.bestCost = this.comparator.COST(this.queue.peek());
+            }
         }
-        return b.getNode().isSolved();
+        return solved;
     }
 
 }

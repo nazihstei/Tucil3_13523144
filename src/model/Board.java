@@ -133,27 +133,8 @@ public class Board {
     }
     public Boolean isSolved() {
         if (!this.isExitValid()) return false;
-        int goalRow = this.goal.getRow();
-        int goalCol = this.goal.getCol();
-        Block checkedBlock = null;
-        Boolean isFit = false;
-        if (goalRow==0) {
-            checkedBlock = this.map.get(goalRow + 1).get(goalCol);
-            isFit = this.getPrimaryPiece().getDirection().equals(Direction.VERTICAL);
-        }
-        if (goalCol==0) {
-            checkedBlock = this.map.get(goalRow).get(goalCol + 1);
-            isFit = this.getPrimaryPiece().getDirection().equals(Direction.HORIZONTAL);
-        }
-        if (goalRow==this.row-1) {
-            checkedBlock = this.map.get(goalRow - 1).get(goalCol);
-            isFit = this.getPrimaryPiece().getDirection().equals(Direction.VERTICAL);
-        }
-        if (goalCol==this.col-1) {
-            checkedBlock = this.map.get(goalRow).get(goalCol - 1);
-            isFit = this.getPrimaryPiece().getDirection().equals(Direction.HORIZONTAL);
-        }
-        return checkedBlock.isPrimary() && isFit;
+        return  this.getPrimaryPiece().nextForward(this) == this.goal ||
+                this.getPrimaryPiece().nextBackward(this) == this.goal;
     }
 
     /* PIECES MOVEMENT */
@@ -254,23 +235,34 @@ public class Board {
     /* ADDITIONAL */
     public ArrayList<Piece> getBlockingPieces() {
         ArrayList<Piece> result = new ArrayList<>();
-        ArrayList<Block> line = new ArrayList<>();
-        if (this.goal.getCol()==0 || this.goal.getCol()==this.col-1) {
-            line = this.map.get(this.goal.getRow());
-        }
-        if (this.goal.getRow()==0 || this.goal.getRow()==this.row-1) {
-            for (int i=0; i<this.row; i++) {
-                line.add(this.map.get(i).get(this.goal.getCol()));
+        Piece primary = this.getPrimaryPiece();
+        if (primary.getDirection().equals(Direction.VERTICAL) || primary.getDirection().equals(Direction.BOTH)) {
+            for (int i = primary.getHead().getRow(); i >= 0; i--) {
+                Block b = this.map.get(i).get(goal.getCol());
+                if (b.isPiece()) {
+                    result.add(this.pieces.get(b.getTag()));
+                }
+            }
+            for (int i = primary.getTail().getRow(); i < this.row; i++) {
+                Block b = this.map.get(i).get(goal.getCol());
+                if (b.isPiece()) {
+                    result.add(this.pieces.get(b.getTag()));
+                }
             }
         }
-        if (line.getLast().isExit()) {
-            line = new ArrayList<>(line.reversed());
-        }
-        for (Block blok : line) {
-            if (!blok.isPiece()) continue;
-            if (blok.isPrimary()) break;
-            if (result.contains(this.pieces.get(blok.getTag()))) continue;
-            result.add(this.pieces.get(blok.getTag()));
+        if (primary.getDirection().equals(Direction.HORIZONTAL) || primary.getDirection().equals(Direction.BOTH)) {
+            for (int j = primary.getHead().getCol(); j >= 0; j--) {
+                Block b = this.map.get(goal.getRow()).get(j);
+                if (b.isPiece()) {
+                    result.add(this.pieces.get(b.getTag()));
+                }
+            }
+            for (int j = primary.getTail().getCol(); j < this.col; j++) {
+                Block b = this.map.get(goal.getRow()).get(j);
+                if (b.isPiece()) {
+                    result.add(this.pieces.get(b.getTag()));
+                }
+            }
         }
         return result;
     }
@@ -287,7 +279,7 @@ public class Board {
             return false;
         }
         for (int i=0; i<b1.row; i++) {
-            for (int j=0; j<b2.row; j++) {
+            for (int j=0; j<b1.col; j++) {
                 if (b1.map.get(i).get(j).getTag() != b2.map.get(i).get(j).getTag()) {
                     return false;
                 }
