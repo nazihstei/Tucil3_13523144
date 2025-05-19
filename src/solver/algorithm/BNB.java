@@ -1,8 +1,5 @@
 package solver.algorithm;
 
-import java.util.ArrayList;
-import java.util.PriorityQueue;
-
 import model.Board;
 import model.BoardTree;
 import solver.heuristic.Heuristic;
@@ -11,75 +8,25 @@ public class BNB extends Algorithm {
     
     /* ATTRIBUTE */
     private Double bestCost;
-    private BNBcomparator comparator;
 
     /* CONSTRUCTOR */
     public BNB(Board b) {
-        super(b);
+        super(b, new BNBcomparator(null));
         this.bestCost = null;
-        this.comparator = new BNBcomparator(null);
-        this.queue = new PriorityQueue<>(this.comparator);
+        this.setComparator = new BNBSetComparator(null, this);
     }
     public BNB(Board b, Heuristic h) {
-        super(b);
+        super(b, new BNBcomparator(h));
         this.bestCost = null;
-        this.comparator = new BNBcomparator(h);
-        this.queue = new PriorityQueue<>(this.comparator);
+        this.setComparator = new BNBSetComparator(h, this);
     }
 
-    /* SOLVER */
-    @Override
-    public Boolean solver() {
-        Boolean solved = false;
-        if (this.tree == null) {
-            return false;
-        }
-        if (this.tree.getNode().isSolved()) {
-            return true;
-        }
-        BoardTree b = this.tree;
-        this.queue.offer(b);
-        // process
-        while (!this.queue.isEmpty()) {
-            b = this.queue.poll();
-            b.generateBranches();
-            ArrayList<BoardTree> branches = b.getBranches();
-            
-            System.out.println("depth: " + b.getDepth());
-            System.out.println(b.getNode());
-            System.out.println();
-
-            if (b.getNode().isSolved()) {
-                solved = true;
-                break;
-            }
-
-            if (!b.isRoot()) {
-                
-                // filter
-                for (int i = 0; i<branches.size(); i++) {
-                    BoardTree node = branches.get(i);
-                    Boolean found = false;
-                    for (BoardTree checkNode : this.trash) {
-                        if (Board.isSame(node.getNode(), checkNode.getNode())) {
-                            this.trash.add(node);
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (found) branches.remove(node);
-                }
-                
-                branches.stream().filter(node -> this.comparator.COST(node) <= this.bestCost);
-            }
-            // update best cost
-            this.trash.add(b);
-            this.queue.addAll(branches);
-            if (!this.queue.isEmpty()) {
-                this.bestCost = this.comparator.COST(this.queue.peek());
-            }
-        }
-        return solved;
+    /* GETTER */
+    public Double getBestCost() {
+        return this.bestCost;
+    }
+    public void setBestCost(Double val) {
+        this.bestCost = val;
     }
 
 }
@@ -115,4 +62,35 @@ class BNBcomparator implements IRoutePlanning {
         return (int) ((f1 - f2)/Math.abs(f1 - f2));
     }
 
+}
+
+class BNBSetComparator extends BNBcomparator {
+
+    /* ATTRIBUTE */
+    private BNB ref;
+
+    /* CONSTRUCTOR */
+    public BNBSetComparator(Heuristic h, BNB ref) {
+        super(h);
+        this.ref = ref;
+    }
+
+    /* ADDITIONAL COMPARATOR */
+    @Override
+    public int compare(BoardTree b1, BoardTree b2) {
+        if (Board.isSame(b1.getNode(), b2.getNode())) {
+            return 0;
+        }
+        if (this.ref.getBestCost() == null) {
+            return -1;
+        }
+        if (this.COST(b1) <= this.ref.getBestCost()) {
+            this.ref.setBestCost(this.COST(b1));
+            return -1;
+        }
+        if (this.COST(b1) < this.COST(b2)) {
+            return -1;
+        }
+        return 0;
+    }
 }

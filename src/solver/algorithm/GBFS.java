@@ -1,7 +1,5 @@
 package solver.algorithm;
 
-import java.util.PriorityQueue;
-
 import model.Board;
 import model.BoardTree;
 import solver.heuristic.Heuristic;
@@ -10,8 +8,7 @@ public class GBFS extends Algorithm {
     
     /* CONSTRUCTOR */
     public GBFS(Board b, Heuristic h) {
-        super(b);
-        this.queue = new PriorityQueue<>(new GBFScomparator(h));
+        super(b, new GBFScomparator(h));
     }
 
 }

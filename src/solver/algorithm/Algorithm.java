@@ -1,7 +1,11 @@
 package solver.algorithm;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.PriorityQueue;
+import java.util.Set;
+import java.util.TreeSet;
 
 import model.Board;
 import model.BoardTree;
@@ -13,6 +17,8 @@ public class Algorithm {
     protected PriorityQueue<BoardTree> queue;
     protected ArrayList<Board> solution;
     protected ArrayList<BoardTree> trash;
+    protected Comparator<BoardTree> comparator;
+    protected Comparator<BoardTree> setComparator;
 
     /* CONSTRUCTOR */
     public Algorithm(Board b) {
@@ -20,6 +26,13 @@ public class Algorithm {
         this.queue = new PriorityQueue<>();
         this.solution = null;
         this.trash = new ArrayList<>();
+    }
+    public Algorithm(Board b, Comparator<BoardTree> comparator) {
+        this.tree = new BoardTree(b);
+        this.queue = new PriorityQueue<>(comparator);
+        this.solution = null;
+        this.trash = new ArrayList<>();
+        this.comparator = comparator;
     }
 
     /* GETTER */
@@ -80,29 +93,54 @@ public class Algorithm {
         while (!this.queue.isEmpty()) {
             b = this.queue.poll();
 
-            System.out.println("depth: " + b.getDepth());
-            System.out.println(b.getNode());
-            System.out.println();
+            // System.out.println("depth: " + b.getDepth());
+            // System.out.println(b.getNode());
+            // System.out.println();
 
             if (b.getNode().isSolved()) {
                 break;
             }
             b.generateBranches();
-            ArrayList<BoardTree> branches = b.getBranches();
-
+            
             // filter
+            Set<BoardTree> temp1;
+            if (this.setComparator == null) {
+                temp1 = new TreeSet<>(this.queue);
+            } else {
+                temp1 = new TreeSet<>(this.setComparator);
+                temp1.addAll(this.queue);
+            }
+            Set<BoardTree> temp2 = new TreeSet<>(this.trash);
+            Set<BoardTree> temp3 = new TreeSet<>(b.getBranches());
+            
+            if (this.comparator == null) {
+                this.queue = new PriorityQueue<>(temp1);
+            } else {
+                this.queue = new PriorityQueue<>(this.comparator); this.queue.addAll(temp1);
+            }
+            this.trash = new ArrayList<>(temp2);
+            List<BoardTree> branches = new ArrayList<>(temp3);
+            
+            // System.out.println("SEBELUM DIHAPUS: " + branches.size());
+            BoardTree[] nodeRemove = new BoardTree[branches.size()]; int j = 0;
             for (int i = 0; i<branches.size(); i++) {
                 BoardTree node = branches.get(i);
-                Boolean found = false;
                 for (BoardTree checkNode : this.trash) {
                     if (Board.isSame(node.getNode(), checkNode.getNode())) {
-                        this.trash.add(node);
-                        found = true;
+                        // System.out.println("IS SAME DIPANGGIL DI SISNI  : " + node);
+                        nodeRemove[j] = node;
+                        j++;
                         break;
                     }
                 }
-                if (found) branches.remove(node);
             }
+            for (int i = 0; i < j; i++) {
+                BoardTree node = nodeRemove[i];
+                this.trash.add(node);
+                branches.remove(node);
+                // System.out.println("REMOVE SUCCESS              : " + node);
+            }
+            // System.out.println("SETELAH DIHAPUS: " + branches.size());
             this.trash.add(b);
             this.queue.addAll(branches);
         }

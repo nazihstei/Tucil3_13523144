@@ -3,7 +3,7 @@ package model;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class BoardTree {
+public class BoardTree implements Comparable<BoardTree> {
     
     /* ATTRIBUTE */
     private BoardTree root;
@@ -91,5 +91,14 @@ public class BoardTree {
     public void generateBranches() {
         ArrayList<Board> nextMovement = this.node.moveAllPieces();
         this.addBranches(nextMovement);
+    }
+
+    /* COMPARE */
+    @Override
+    public int compareTo(BoardTree b) {
+        if (Board.isSame(this.getNode(), b.getNode())) {
+            return 0;
+        }
+        return 1;
     }
 }
