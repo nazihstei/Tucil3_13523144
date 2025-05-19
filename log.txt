@@ -1,0 +1,16 @@
+[DualOutput] Dual output activated. Logging to console and: log.txt
+
+[===========================================================]
+[===============[  Rush Hour Solver Master  ]===============]
+[===========================================================]
+[     Selamat datang di Solver permainan Rush Hour no.1     ]
+[  di dunia. Terdapat pilihan algorithma yang keren dengan  ]
+[  beragam pilihan heuristik yang menarik. Selamat mencoba! ]
+[===========================================================]
+
+[*] Heap Memory Information
+    [+] Total Heap : 252.00 MB
+    [+] Free Heap  : 248.00 MB
+    [+] Used Heap  : 4.00 MB
+    [+] Max Heap   : 8.00 GB
+

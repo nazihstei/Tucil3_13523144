@@ -1,7 +1,7 @@
 package model;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashMap;
 
 public class BoardTree {
     
@@ -10,7 +10,7 @@ public class BoardTree {
     private Board node;
     private ArrayList<BoardTree> branches;
     private long depth;
-    private static ArrayList<BoardTree> leaves;
+    private static HashMap<BoardTree, ArrayList<BoardTree>> leaves = new HashMap<>();
 
     /* CONSTRUCTOR */
     public BoardTree(Board node) {
@@ -18,19 +18,24 @@ public class BoardTree {
         this.node = node;
         this.depth = 0;
         this.branches = new ArrayList<>();
-        BoardTree.leaves = new ArrayList<>();
+        BoardTree.leaves.put(this, new ArrayList<>());
+        BoardTree.leaves.get(this).add(this);
     }
     public BoardTree(Board node, BoardTree root) {
         this.root = root;
         this.node = node;
         this.depth = root.getDepth() + 1;
         this.branches = new ArrayList<>();
-        BoardTree.leaves.add(this);
+        BoardTree.leaves.get(this.getFirstRoot()).add(this);
     }
 
     /* GETTER and SETTER */
     public BoardTree getRoot() {
         return this.root;
+    }
+    public BoardTree getFirstRoot() {
+        if (this.isRoot()) return this;
+        return this.root.getFirstRoot();
     }
     public long getDepth() {
         return this.depth;
@@ -41,8 +46,8 @@ public class BoardTree {
     public ArrayList<BoardTree> getBranches() {
         return this.branches;
     }
-    public static ArrayList<BoardTree> getLeaves() {
-        return BoardTree.leaves;
+    public static ArrayList<BoardTree> getLeaves(BoardTree root) {
+        return BoardTree.leaves.get(root);
     }
     public void setNode(Board b) {
         this.node = b;
@@ -65,9 +70,9 @@ public class BoardTree {
     public void addBranch(Board b) {
         if (b == null) return;
         this.branches.add(new BoardTree(b, this));
-        BoardTree.leaves.remove(this);
+        if (BoardTree.leaves.containsKey(this)) BoardTree.leaves.get(this).remove(this);
     }
-    public void addBranches(Collection<Board> data) {
+    public void addBranches(ArrayList<Board> data) {
         if (data == null) return;
         for (Board b : data) {
             this.addBranch(b);

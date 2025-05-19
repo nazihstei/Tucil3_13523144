@@ -15,8 +15,8 @@ public class SolidnessBlockingPiece extends Heuristic {
         ArrayList<Piece> blockingPieces = b.getBlockingPieces();
         int count = 0;
         for (Piece p : blockingPieces) {
-            if (p.canMove(p.nextForward(b))) continue;
-            if (p.canMove(p.nextBackward(b))) continue;
+            if (p.canMove(p.nextForward(b), b)) continue;
+            if (p.canMove(p.nextBackward(b), b)) continue;
             count++;
         }
 

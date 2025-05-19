@@ -115,14 +115,21 @@ public class Board {
     /* VALIDITY CHECK */
     public Boolean haveCoordinate(int row, int col) {
         return  (row >= 0 && col >= 0)
-                && (this.row < row)
-                && (this.col < col);
+                && (row < this.row)
+                && (col < this.col);
     }
     public Boolean isExitValid() {
-        return  (this.goal.getRow()<=0 && this.goal.getCol()<=0) ||
-                (this.goal.getRow()<=0 && this.goal.getCol()>=this.col-1) ||
-                (this.goal.getRow()>=this.row-1 && this.goal.getCol()<=0) ||
-                (this.goal.getRow()>=this.row-1 && this.goal.getCol()>=this.col-1);
+        if (this.goal == null) {
+            return false;
+        }
+        int r = this.goal.getRow();
+        int c = this.goal.getCol();
+        int R = this.row-1;
+        int C = this.col-1;
+        return  (r == 0 && this.map.get(r+1).get(c).isValid()) ||
+                (r == R && this.map.get(r-1).get(c).isValid()) ||
+                (c == 0 && this.map.get(r).get(c+1).isValid()) ||
+                (c == C && this.map.get(r).get(c-1).isValid());
     }
     public Boolean isSolved() {
         if (!this.isExitValid()) return false;
@@ -132,19 +139,19 @@ public class Board {
         Boolean isFit = false;
         if (goalRow==0) {
             checkedBlock = this.map.get(goalRow + 1).get(goalCol);
-            isFit = this.pieces.get('P').getDirection().equals(Direction.VERTICAL);
+            isFit = this.getPrimaryPiece().getDirection().equals(Direction.VERTICAL);
         }
         if (goalCol==0) {
             checkedBlock = this.map.get(goalRow).get(goalCol + 1);
-            isFit = this.pieces.get('P').getDirection().equals(Direction.HORIZONTAL);
+            isFit = this.getPrimaryPiece().getDirection().equals(Direction.HORIZONTAL);
         }
         if (goalRow==this.row-1) {
             checkedBlock = this.map.get(goalRow - 1).get(goalCol);
-            isFit = this.pieces.get('P').getDirection().equals(Direction.VERTICAL);
+            isFit = this.getPrimaryPiece().getDirection().equals(Direction.VERTICAL);
         }
         if (goalCol==this.col-1) {
             checkedBlock = this.map.get(goalRow).get(goalCol - 1);
-            isFit = this.pieces.get('P').getDirection().equals(Direction.HORIZONTAL);
+            isFit = this.getPrimaryPiece().getDirection().equals(Direction.HORIZONTAL);
         }
         return checkedBlock.isPrimary() && isFit;
     }
@@ -156,53 +163,54 @@ public class Board {
         Board moveDown = null;
         Board moveLeft = null;
         Board moveRight = null;
-        
-        if (
-            this.pieces.get(tag).getDirection().equals(Direction.VERTICAL) || 
-            this.pieces.get(tag).getDirection().equals(Direction.BOTH)
-            ) {
-            int colVertical = this.pieces.get(tag).getHead().getCol();
-            int rowUp = this.pieces.get(tag).getHead().getRow() - 1;
-            int rowDown = this.pieces.get(tag).getTail().getRow() + 1;
 
+        Block forward = this.pieces.get(tag).nextForward(this);
+        Block backward = this.pieces.get(tag).nextBackward(this);
+        
+        // System.out.printf("%c forward : %b\n", tag, this.pieces.get(tag).canMove(forward, this));
+        // System.out.printf("%c backward: %b\n", tag, this.pieces.get(tag).canMove(backward, this));
+        // System.out.println(this.pieces.get(tag));
+
+        if (this.pieces.get(tag).canMove(forward, this)) {
             // move up
-            if (this.haveCoordinate(rowUp, colVertical)) {
+            if (this.pieces.get(tag).getDirection().equals(Direction.VERTICAL) ||
+            this.pieces.get(tag).getDirection().equals(Direction.BOTH)) {
                 moveUp = new Board(this);
-                Block blockUp = moveUp.map.get(rowUp).get(colVertical);
-                moveUp.pieces.get(tag).move(blockUp, moveUp);
+                // Block blockUp = moveUp.pieces.get(tag).nextForward(moveUp);
+                // moveUp.pieces.get(tag).move(blockUp, moveUp);
+                moveUp.pieces.get(tag).moveForward(moveUp);
                 moveUp.moveTag = tag;
                 moveUp.moveDirection = "UP";
             }
-            // move down
-            if (this.haveCoordinate(rowDown, colVertical)) {
-                moveDown = new Board(this);
-                Block blockDown = moveDown.map.get(rowDown).get(colVertical);
-                moveDown.pieces.get(tag).move(blockDown, moveUp);
-                moveDown.moveTag = tag;
-                moveDown.moveDirection = "DOWN";
-            }
-            
-        } else if (
-                this.pieces.get(tag).getDirection().equals(Direction.HORIZONTAL) || 
-                this.pieces.get(tag).getDirection().equals(Direction.BOTH)
-                ) {
-            int rowHorizontal = this.pieces.get(tag).getHead().getRow();
-            int colLeft = this.pieces.get(tag).getHead().getCol() - 1;
-            int colRight = this.pieces.get(tag).getTail().getCol() + 1;
-            
             // move left
-            if (this.haveCoordinate(rowHorizontal, colLeft)) {
+            if (this.pieces.get(tag).getDirection().equals(Direction.HORIZONTAL) ||
+            this.pieces.get(tag).getDirection().equals(Direction.BOTH)) {
                 moveLeft = new Board(this);
-                Block blockLeft = moveLeft.map.get(rowHorizontal).get(colLeft);
-                moveLeft.pieces.get(tag).move(blockLeft, moveLeft);
+                // Block blockLeft = moveLeft.pieces.get(tag).nextForward(moveLeft);
+                // moveLeft.pieces.get(tag).move(blockLeft, moveLeft);
+                moveLeft.pieces.get(tag).moveForward(moveLeft);
                 moveLeft.moveTag = tag;
                 moveLeft.moveDirection = "LEFT";
             }
+        }
+        if (this.pieces.get(tag).canMove(backward, this)) {
+            // move down
+            if (this.pieces.get(tag).getDirection().equals(Direction.VERTICAL) ||
+            this.pieces.get(tag).getDirection().equals(Direction.BOTH)) {
+                moveDown = new Board(this);
+                // Block blockDown = moveDown.pieces.get(tag).nextBackward(moveDown);
+                // moveDown.pieces.get(tag).move(blockDown, moveDown);
+                moveDown.pieces.get(tag).moveBackward(moveDown);
+                moveDown.moveTag = tag;
+                moveDown.moveDirection = "DOWN";
+            }
             // move right
-            if (this.haveCoordinate(rowHorizontal, colRight)) {
+            if (this.pieces.get(tag).getDirection().equals(Direction.HORIZONTAL) ||
+            this.pieces.get(tag).getDirection().equals(Direction.BOTH)) {
                 moveRight = new Board(this);
-                Block blockRight = moveRight.map.get(rowHorizontal).get(colRight);
-                moveRight.pieces.get(tag).move(blockRight, moveRight);
+                // Block blockRight = moveRight.pieces.get(tag).nextBackward(moveRight);
+                // moveRight.pieces.get(tag).move(blockRight, moveRight);
+                moveRight.pieces.get(tag).moveBackward(moveRight);
                 moveRight.moveTag = tag;
                 moveRight.moveDirection = "RIGHT";
             }
@@ -213,6 +221,7 @@ public class Board {
         if (moveDown != null) result.add(moveDown);
         if (moveLeft != null) result.add(moveLeft);
         if (moveRight != null) result.add(moveRight);
+        // for (Board b : result) System.out.println(b);
         return result;
     }
     public ArrayList<Board> moveAllPieces() {
@@ -222,7 +231,7 @@ public class Board {
         }
         return result;
     }
-    
+        
     /* PRINT BOARD */
     public String toString() {
         String result = String.format("[ %c ] %s\n", this.moveTag, this.moveDirection);
@@ -234,6 +243,11 @@ public class Board {
             result = result + "\n";
         }
         if (result.length() > 1) result = result.substring(0, result.length()-1);
+        // String pieces = "";
+        // for (Character k : this.pieces.keySet()) {
+        //     pieces = pieces + this.pieces.get(k).toString() + "\n";
+        // }
+        // return pieces + result;
         return result;
     }
 
@@ -259,5 +273,26 @@ public class Board {
             result.add(this.pieces.get(blok.getTag()));
         }
         return result;
+    }
+
+    /* COMPARATOR */
+    public static Boolean isSame(Board b1, Board b2) {
+        if (b1 == null || b2 == null) {
+            return false;
+        }
+        if (
+            b1.row != b2.row || b1.col != b2.col || 
+            b1.goal.getRow() != b2.goal.getRow() ||
+            b1.goal.getCol() != b2.goal.getCol()) {
+            return false;
+        }
+        for (int i=0; i<b1.row; i++) {
+            for (int j=0; j<b2.row; j++) {
+                if (b1.map.get(i).get(j).getTag() != b2.map.get(i).get(j).getTag()) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }

@@ -25,13 +25,18 @@ public class Main {
                 Home.Header();
                 System.out.println("[*] Silahkan masukkan file konfigurasi");
                 System.out.print  ("    >> ");
-                String filepath = "../test/" + input.nextLine() + ".txt";
+                String filepath = "./test/" + input.nextLine() + ".txt";
                 System.out.println("[*] Memuat konfigurasi ...");
                 rootBoard = FileHandler.loadFile(filepath);
-                Home.Footer();
+                // Home.Footer();
             }
-            Home.Header();
+            // Home.Header();
             System.out.println("[*] Konfigurasi berhasil dimuat!");
+            if (!rootBoard.isExitValid()) {
+                System.err.println("EXIT TIDAK VALID");
+                System.out.println(rootBoard);
+                Thread.sleep(5000);
+            }
             Home.Footer();
             
             /* INPUT ALGORITHM AND HAURISTIC */
@@ -145,7 +150,7 @@ public class Main {
             }
             
             /* RUN SOLVER */
-            DualOutput.activate("../result.txt");
+            DualOutput.activate("log.txt");
             Home.Header();
             long startTime = System.currentTimeMillis();
             solver.solve();
@@ -164,9 +169,11 @@ public class Main {
             e.printStackTrace();
             
         } finally {
+            // Home.Header();
             /* TERMINATION */
             DualOutput.deactivate();  
             input.close();
+            // Home.Footer();
         }
     }
 }
@@ -184,10 +191,11 @@ class Home {
         System.out.println("[  beragam pilihan heuristik yang menarik. Selamat mencoba! ]");
         System.out.println("[===========================================================]");
         System.out.println();
+        System.out.println(MemoryInfo.get());
     }
     public static void Footer() throws InterruptedException {
         System.out.println();
         System.out.println("[===========================================================]");
-        Thread.sleep(1000);
+        // Thread.sleep(1000);
     }
 }

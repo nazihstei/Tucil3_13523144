@@ -35,6 +35,14 @@ public class Piece {
         this.blocks.add(block);
         this.setDirection();
     }
+    public Piece(Piece p) {
+        this.tag = p.tag;
+        this.blocks = new ArrayDeque<>();
+        for (Block b : p.blocks) { // make new Deque, but shallow copy the blocks
+            this.blocks.addLast(b);
+        }
+        this.direction = p.direction;
+    }
 
     /* SET DIRECTION */
     public void setDirection() {
@@ -72,7 +80,7 @@ public class Piece {
     /* BLOCK ACCESS */
     public Block nextForward(Board b) {
         try {
-            if (this.direction == Direction.VERTICAL || this.direction == Direction.BOTH) {
+            if (this.direction.equals(Direction.VERTICAL) || this.direction.equals(Direction.BOTH)) {
                 Block head = this.getHead();
                 return b.getMap().get(head.getRow()-1).get(head.getCol());
             } else {
@@ -85,7 +93,7 @@ public class Piece {
     }
     public Block nextBackward(Board b) {
         try {
-            if (this.direction == Direction.VERTICAL || this.direction == Direction.BOTH) {
+            if (this.direction.equals(Direction.VERTICAL) || this.direction.equals(Direction.BOTH)) {
                 Block tail = this.getTail();
                 return b.getMap().get(tail.getRow()+1).get(tail.getCol());
             } else {
@@ -98,37 +106,80 @@ public class Piece {
     }
 
     /* MOVEMENT */
-    public Boolean canMove(Block b) {
-        // conditional preparation
-        if (!b.isValid()) return false;
-        Boolean vertical    = ((this.direction == Direction.VERTICAL || this.direction == Direction.BOTH) && this.getHead().getCol() == b.getCol());
-        Boolean horizontal  = ((this.direction == Direction.HORIZONTAL || this.direction == Direction.BOTH) && this.getHead().getRow() == b.getRow());
-        Boolean forward     = (this.getHead().colDistanceTo(b) == -1 || this.getHead().rowDistanceTo(b) == -1);
-        Boolean backward    = (this.getTail().colDistanceTo(b) == 1 || this.getTail().rowDistanceTo(b) == 1);
-        return  (((vertical && forward) || (horizontal && forward)) 
-                || ((vertical && backward) || (horizontal && backward)));
-    }
-    public void move(Block b, Board B) {
+    public Boolean canMove(Block b, Board B) {
         // validity check
-        if (!b.isValid()) return;
+        if (b==null || !b.isValid() || this.blocks.isEmpty()) return false;
+        // System.out.printf("%c is valid\n", this.tag);
         
         // conditional preparation
-        Boolean vertical    = ((this.direction == Direction.VERTICAL || this.direction == Direction.BOTH) && this.getHead().getCol() == b.getCol());
-        Boolean horizontal  = ((this.direction == Direction.HORIZONTAL || this.direction == Direction.BOTH) && this.getHead().getRow() == b.getRow());
-        Boolean forward     = (this.getHead().colDistanceTo(b) == -1 || this.getHead().rowDistanceTo(b) == -1);
-        Boolean backward    = (this.getTail().colDistanceTo(b) == 1 || this.getTail().rowDistanceTo(b) == 1);
+        // Boolean vertical    = ((this.direction.equals(Direction.VERTICAL) || this.direction.equals(Direction.BOTH)) && this.getHead().getCol() == b.getCol());
+        // Boolean horizontal  = ((this.direction.equals(Direction.HORIZONTAL) || this.direction.equals(Direction.BOTH)) && this.getHead().getRow() == b.getRow());
+        Boolean forward     = (b == this.nextForward(B) && b.isEmpty());
+        Boolean backward    = (b == this.nextBackward(B) && b.isEmpty());
         
-        // execution
-        if ((vertical && forward) || (horizontal && forward)) {
-            b.setTag(this.getHead().getTag());
-            this.blocks.addFirst(b);
-            this.getTail().setTag('.');
-            this.blocks.removeLast();
-        } else if ((vertical && backward) || (horizontal && backward)) {
-            b.setTag(this.getHead().getTag());
-            this.blocks.addLast(b);
+        // System.out.printf("%c (v: %b) (h: %b) (f: %b) (b: %b) \n", this.tag, vertical, horizontal, forward, backward);
+        
+        // return  (((vertical && forward) || (horizontal && forward)) 
+        // || ((vertical && backward) || (horizontal && backward)));
+        return (forward || backward);
+    }
+    // public void move(Block b, Board B) {
+    //     // validity check
+    //     if (!this.canMove(b, B)) return;
+        
+    //     // conditional preparation
+    //     Boolean vertical    = ((this.direction.equals(Direction.VERTICAL) || this.direction.equals(Direction.BOTH)) && this.getHead().getCol() == b.getCol());
+    //     Boolean horizontal  = ((this.direction.equals(Direction.HORIZONTAL) || this.direction.equals(Direction.BOTH)) && this.getHead().getRow() == b.getRow());
+    //     Boolean forward     = (b == this.nextForward(B) && b.isEmpty());
+    //     Boolean backward    = (b == this.nextBackward(B) && b.isEmpty());
+        
+    //     // execution
+    //     if ((vertical && forward) || (horizontal && forward)) {
+    //         b.setTag(this.getHead().getTag());
+    //         this.blocks.addFirst(b);
+    //         this.getTail().setTag('.');
+    //         this.blocks.removeLast();
+    //     } else if ((vertical && backward) || (horizontal && backward)) {
+    //         b.setTag(this.getHead().getTag());
+    //         this.blocks.addLast(b);
+    //         this.getHead().setTag('.');
+    //         this.blocks.removeFirst();
+    //     }
+    // }
+    public Piece moveForward(Board B) {
+        if (!this.canMove(this.nextForward(B), B)) {
+            return this;
+        }
+        if (this.blocks.isEmpty()) {
+            return this;
+        } else {
+            Deque<Block> temp = new ArrayDeque<>();
+            this.nextForward(B).setTag(this.tag);
+            temp.addLast(this.nextForward(B));
             this.getHead().setTag('.');
             this.blocks.removeFirst();
+            temp.addAll(this.moveForward(B).blocks);
+            this.blocks = temp;
+            return this;
+        }
+    }
+    public Piece moveBackward(Board B) {
+        if (!this.canMove(this.nextBackward(B), B)) {
+            return this;
+        }
+        if (this.blocks.isEmpty()) {
+            return this;
+        } else {
+            Deque<Block> temp = new ArrayDeque<>();
+            this.nextBackward(B).setTag(this.tag);
+            temp.addFirst(this.nextBackward(B));
+            this.getTail().setTag('.');
+            this.blocks.removeLast();
+            for (Block blok : this.moveBackward(B).blocks) {
+                temp.addFirst(blok);
+            }
+            this.blocks = temp;
+            return this;
         }
         
     }

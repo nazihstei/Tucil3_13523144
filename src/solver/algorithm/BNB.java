@@ -29,22 +29,46 @@ public class BNB extends Algorithm {
 
     /* SOLVER */
     @Override
-    public void solver(BoardTree b) {
-        // update best cost
-        if (!b.isRoot() && this.bestCost == null) {
-            this.bestCost = this.comparator.COST(b);
+    public Boolean solver() {
+        if (this.tree == null) {
+            return false;
         }
-
-        // process queue head
-        b.generateBranches();
-        ArrayList<BoardTree> branches = b.getBranches();
-        branches.stream().filter(node -> this.comparator.COST(node) <= this.bestCost);
-        this.queue.addAll(branches);
-
-        // process next head
-        if (!this.queue.isEmpty()) {
-            solver(this.queue.poll());
+        if (this.tree.getNode().isSolved()) {
+            return true;
         }
+        BoardTree b = this.tree;
+        this.queue.offer(b);
+        // process
+        while (!this.queue.isEmpty()) {
+            b = this.queue.poll();
+            b.generateBranches();
+            
+            // update best cost
+            if (b.isRoot()) {
+                ArrayList<BoardTree> branches = b.getBranches();
+                this.queue.addAll(branches);
+            } else {
+                this.bestCost = this.comparator.COST(b);
+                ArrayList<BoardTree> branches = b.getBranches();
+                
+                // filter
+                for (int i = 0; i<branches.size(); i++) {
+                    BoardTree node = branches.get(i);
+                    Boolean found = false;
+                    for (BoardTree checkNode : this.trash) {
+                        if (Board.isSame(node.getNode(), checkNode.getNode())) {
+                            this.trash.add(node);
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (found) branches.remove(node);
+                }
+                
+                branches.stream().filter(node -> this.comparator.COST(node) <= this.bestCost);
+            }
+        }
+        return b.getNode().isSolved();
     }
 
 }
@@ -76,6 +100,7 @@ class BNBcomparator implements IRoutePlanning {
     public int compare(BoardTree b1, BoardTree b2) {
         Double f1 = this.COST(b1);
         Double f2 = this.COST(b2);
+        if (f1 - f2 == 0) return 0;
         return (int) ((f1 - f2)/Math.abs(f1 - f2));
     }
 

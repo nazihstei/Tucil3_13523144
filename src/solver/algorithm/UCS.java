@@ -21,6 +21,7 @@ class UCScomparator implements IRoutePlanning {
     public int compare(BoardTree b1, BoardTree b2) {
         Long f1 = Algorithm.g(b1);
         Long f2 = Algorithm.g(b2);
+        if (f1 - f2 == 0) return 0;
         return (int) ((f1 - f2)/Math.abs(f1 - f2));
     }
     

@@ -30,6 +30,7 @@ class GBFScomparator implements IRoutePlanning {
     public int compare(BoardTree b1, BoardTree b2) {
         Double f1 = this.h.calculate(b1.getNode());
         Double f2 = this.h.calculate(b2.getNode());
+        if (f1 - f2 == 0) return 0;
         return (int) ((f1 - f2)/Math.abs(f1 - f2));
     }
 

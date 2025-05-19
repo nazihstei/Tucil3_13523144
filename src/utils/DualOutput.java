@@ -15,7 +15,7 @@ public class DualOutput {
     public static void activate(String filePath) {
         if (!isActive) {
             try {
-                FileOutputStream fileOutputStream = new FileOutputStream(filePath, true);
+                FileOutputStream fileOutputStream = new FileOutputStream(filePath, false);
                 fileOut = new PrintStream(fileOutputStream);
                 dualOut = new PrintStream(new DualOutputStream(originalOut, fileOut));
                 System.setOut(dualOut);

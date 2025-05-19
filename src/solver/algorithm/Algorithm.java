@@ -12,12 +12,14 @@ public class Algorithm {
     protected BoardTree tree;
     protected PriorityQueue<BoardTree> queue;
     protected ArrayList<Board> solution;
+    protected ArrayList<BoardTree> trash;
 
     /* CONSTRUCTOR */
     public Algorithm(Board b) {
         this.tree = new BoardTree(b);
         this.queue = new PriorityQueue<>();
         this.solution = null;
+        this.trash = new ArrayList<>();
     }
 
     /* GETTER */
@@ -27,10 +29,14 @@ public class Algorithm {
 
     /* SOLVER */
     public ArrayList<Board> solve() {
-        this.solver(this.tree);
+        Boolean hasSolution = this.solver();
+        if (hasSolution == false) {
+            return null;
+        }
+
         // find goal in leaf
         BoardTree goal = null;
-        for (BoardTree leaf : BoardTree.getLeaves()) {
+        for (BoardTree leaf : BoardTree.getLeaves(this.tree)) {
             if (leaf.getNode().isSolved()) {
                 if (goal == null) {
                     goal = leaf;
@@ -49,15 +55,45 @@ public class Algorithm {
         this.solution = result;
         return result;
     }
-    public void solver(BoardTree b) {
-        // process queue head
-        b.generateBranches();
-        this.queue.addAll(b.getBranches());
+    public Boolean solver() {
 
-        // process next head
-        if (!b.getNode().isSolved()) {
-            solver(this.queue.poll());
+        if (this.tree == null) {
+            return false;
         }
+        if (this.tree.getNode().isSolved()) {
+            return true;
+        }
+        BoardTree b = this.tree;
+        this.queue.offer(b);
+        while (!this.queue.isEmpty()) {
+            b = this.queue.poll();
+
+            // System.out.println(b.getNode());
+            // System.out.println();
+
+            if (b.getNode().isSolved()) {
+                break;
+            }
+            b.generateBranches();
+            ArrayList<BoardTree> branches = b.getBranches();
+
+            // filter
+            for (int i = 0; i<branches.size(); i++) {
+                BoardTree node = branches.get(i);
+                Boolean found = false;
+                for (BoardTree checkNode : this.trash) {
+                    if (Board.isSame(node.getNode(), checkNode.getNode())) {
+                        this.trash.add(node);
+                        found = true;
+                        break;
+                    }
+                }
+                if (found) branches.remove(node);
+            }
+
+            this.queue.addAll(branches);
+        }
+        return b.getNode().isSolved();
     }
 
     /* GET: g(n) */
@@ -71,7 +107,7 @@ public class Algorithm {
         String result = "";
         
         for (Board step : this.solution) {
-            result = result + String.format("Gerakan %d : %s", this.solution.indexOf(step), step.toString());
+            result = result + String.format("Gerakan %d :\n%s", this.solution.indexOf(step), step.toString());
         }
         
         return result;
