@@ -78,6 +78,7 @@ public class Block {
     }
 
     /* PRINT BLOCK */
+    @Override
     public String toString() {
         return String.format("(%c: %d, %d)", this.tag, this.row, this.col);
     }

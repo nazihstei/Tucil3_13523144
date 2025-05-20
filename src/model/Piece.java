@@ -1,6 +1,7 @@
 package model;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
 
 
@@ -76,16 +77,27 @@ public class Piece {
     public Direction getDirection() {
         return this.direction;
     }
+    public ArrayList<Block> getBlocks() {
+        ArrayList<Block> result = new ArrayList<>();
+        Deque<Block> temp = new ArrayDeque<>();
+        while (!this.blocks.isEmpty()) {
+            Block b = this.blocks.poll();
+            result.add(b);
+            temp.add(b);
+        }
+        this.blocks = temp;
+        return result;
+    }
 
     /* BLOCK ACCESS */
-    public Block nextForward(Board b) {
+        public Block nextForward(Board b) {
         try {
             if (this.direction.equals(Direction.VERTICAL) || this.direction.equals(Direction.BOTH)) {
                 Block head = this.getHead();
                 return b.getMap().get(head.getRow()-1).get(head.getCol());
             } else {
-                Block tail = this.getTail();
-                return b.getMap().get(tail.getRow()).get(tail.getCol()+1);
+                Block head = this.getHead();
+                return b.getMap().get(head.getRow()).get(head.getCol()-1);
             }
         } catch (Exception e) {
             return null;
@@ -97,8 +109,8 @@ public class Piece {
                 Block tail = this.getTail();
                 return b.getMap().get(tail.getRow()+1).get(tail.getCol());
             } else {
-                Block head = this.getHead();
-                return b.getMap().get(head.getRow()).get(head.getCol()-1);
+                Block tail = this.getTail();
+                return b.getMap().get(tail.getRow()).get(tail.getCol()+1);
             }
         } catch (Exception e) {
             return null;
@@ -109,43 +121,11 @@ public class Piece {
     public Boolean canMove(Block b, Board B) {
         // validity check
         if (b==null || !b.isValid() || this.blocks.isEmpty()) return false;
-        // System.out.printf("%c is valid\n", this.tag);
-        
-        // conditional preparation
-        // Boolean vertical    = ((this.direction.equals(Direction.VERTICAL) || this.direction.equals(Direction.BOTH)) && this.getHead().getCol() == b.getCol());
-        // Boolean horizontal  = ((this.direction.equals(Direction.HORIZONTAL) || this.direction.equals(Direction.BOTH)) && this.getHead().getRow() == b.getRow());
+       
         Boolean forward     = (b == this.nextForward(B) && b.isEmpty());
         Boolean backward    = (b == this.nextBackward(B) && b.isEmpty());
-        
-        // System.out.printf("%c (v: %b) (h: %b) (f: %b) (b: %b) \n", this.tag, vertical, horizontal, forward, backward);
-        
-        // return  (((vertical && forward) || (horizontal && forward)) 
-        // || ((vertical && backward) || (horizontal && backward)));
         return (forward || backward);
     }
-    // public void move(Block b, Board B) {
-    //     // validity check
-    //     if (!this.canMove(b, B)) return;
-        
-    //     // conditional preparation
-    //     Boolean vertical    = ((this.direction.equals(Direction.VERTICAL) || this.direction.equals(Direction.BOTH)) && this.getHead().getCol() == b.getCol());
-    //     Boolean horizontal  = ((this.direction.equals(Direction.HORIZONTAL) || this.direction.equals(Direction.BOTH)) && this.getHead().getRow() == b.getRow());
-    //     Boolean forward     = (b == this.nextForward(B) && b.isEmpty());
-    //     Boolean backward    = (b == this.nextBackward(B) && b.isEmpty());
-        
-    //     // execution
-    //     if ((vertical && forward) || (horizontal && forward)) {
-    //         b.setTag(this.getHead().getTag());
-    //         this.blocks.addFirst(b);
-    //         this.getTail().setTag('.');
-    //         this.blocks.removeLast();
-    //     } else if ((vertical && backward) || (horizontal && backward)) {
-    //         b.setTag(this.getHead().getTag());
-    //         this.blocks.addLast(b);
-    //         this.getHead().setTag('.');
-    //         this.blocks.removeFirst();
-    //     }
-    // }
     public Piece moveForward(Board B) {
         if (!this.canMove(this.nextForward(B), B)) {
             return this;
@@ -185,6 +165,7 @@ public class Piece {
     }
 
     /* PRINT PIECE */
+    @Override
     public String toString() {
         String result = String.format("[%s] %c : ", this.direction, this.tag);
         for (Block blok : this.blocks) {

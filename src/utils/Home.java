@@ -32,13 +32,13 @@ public class Home {
     public static void Solution(Algorithm solver, long startDuration) throws InterruptedException {
         System.out.println(    "[*] Berikut adalah informasi pencarian");
         System.out.printf("    [+] Node Count  : %d node\n", solver.getTree().nodeCount());
-        System.out.printf("    [+] Total Depth : %d level\n", solver.getTree().getGoal().getDepth());
+        System.out.printf("    [+] Max Depth   : %d level\n", solver.getTree().getMaxDepth());
         System.out.printf("    [+] Duration    : %d ms\n", System.currentTimeMillis() - startDuration);
         System.out.println();
         System.out.println("[===========================================================]");
         System.out.println("[===============[   THIS IS YOUR SOLUTION   ]===============]");
         System.out.println("[===========================================================]");
-        System.out.println(solver.toString(4));
+        System.out.println(solver);
     }
     
     /* PRIVATE METHOD */
@@ -54,7 +54,7 @@ public class Home {
         System.out.printf("    [+] Exec Time     : %d ms\n", System.currentTimeMillis() - startDuration);
         System.out.println();
         System.out.println("[*] Checked Node");
-        System.out.println(checkedNode.getNode().toString(4));
+        System.out.println(checkedNode.getNode());
     }
     private static String getMemoryInfo() {
         Runtime runtime = Runtime.getRuntime();

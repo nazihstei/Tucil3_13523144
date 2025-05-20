@@ -136,30 +136,37 @@ public class Algorithm {
     }
 
     /* PRINT RESULT */
+    @Override
     public String toString() {
-        return this.toString(0);
+        return this.toString(4, true);
     }
-    public String toString(int indent) {
+    public String toString(int indent, Boolean color) {
         
-        String result = "";
+        StringBuilder result = new StringBuilder();
         String indentString = "";
         for (int i = 0; i < indent; i++) {
             indentString = indentString + " ";
         }
         
         if (this.solution == null) {
-            result = indentString + "DON'T HAVE SOLUTION";
+            result.append(indentString).append("DON'T HAVE SOLUTION");
         } else if (this.solution.size() == 0) {
-            result = indentString + "DON'T HAVE SOLUTION";
+            result.append(indentString).append("DON'T HAVE SOLUTION");
         } else {
             for (Board step : this.solution) {
-                result = result + String.format("\nGerakan %d\n", this.solution.indexOf(step));
-                result = result + step.toString(indent) + "\n";
+                result.append(String.format("\nGerakan %d\n", this.solution.indexOf(step)));
+                if (color) {
+                    result.append(step.toStringColor(indent));
+                } else {
+                    result.append(step.toString(indent));
+                }
+                result.append("\n");
             }
-            if (result.length() > 1) result = result.substring(0, result.length()-1);
+            if (result.length() > 0) {
+                result.deleteCharAt(result.length() - 1); // Hapus newline terakhir
+            }
         }
-        
-        return result;
+        return result.toString();
     }
 
     /* STATIC METHOD */

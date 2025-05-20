@@ -52,6 +52,13 @@ public class BoardTree implements Comparable<BoardTree> {
     public void setNode(Board b) {
         this.node = b;
     }
+    public long getMaxDepth() {
+        long maxDepth = 0;
+        for (BoardTree leaf : BoardTree.getLeaves(this)) {
+            maxDepth = Math.max(maxDepth, leaf.getDepth());
+        }
+        return maxDepth;
+    }
 
     /* NODE COUNT */
     public long nodeCount() {

@@ -3,6 +3,8 @@ package model;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.fusesource.jansi.Ansi;
+
 import model.Piece.Direction;
 
 public class Board {
@@ -157,18 +159,12 @@ public class Board {
 
         Block forward = this.pieces.get(tag).nextForward(this);
         Block backward = this.pieces.get(tag).nextBackward(this);
-        
-        // System.out.printf("%c forward : %b\n", tag, this.pieces.get(tag).canMove(forward, this));
-        // System.out.printf("%c backward: %b\n", tag, this.pieces.get(tag).canMove(backward, this));
-        // System.out.println(this.pieces.get(tag));
 
         if (this.pieces.get(tag).canMove(forward, this)) {
             // move up
             if (this.pieces.get(tag).getDirection().equals(Direction.VERTICAL) ||
             this.pieces.get(tag).getDirection().equals(Direction.BOTH)) {
                 moveUp = new Board(this);
-                // Block blockUp = moveUp.pieces.get(tag).nextForward(moveUp);
-                // moveUp.pieces.get(tag).move(blockUp, moveUp);
                 moveUp.pieces.get(tag).moveForward(moveUp);
                 moveUp.moveTag = tag;
                 moveUp.moveDirection = "UP";
@@ -177,8 +173,6 @@ public class Board {
             if (this.pieces.get(tag).getDirection().equals(Direction.HORIZONTAL) ||
             this.pieces.get(tag).getDirection().equals(Direction.BOTH)) {
                 moveLeft = new Board(this);
-                // Block blockLeft = moveLeft.pieces.get(tag).nextForward(moveLeft);
-                // moveLeft.pieces.get(tag).move(blockLeft, moveLeft);
                 moveLeft.pieces.get(tag).moveForward(moveLeft);
                 moveLeft.moveTag = tag;
                 moveLeft.moveDirection = "LEFT";
@@ -189,8 +183,6 @@ public class Board {
             if (this.pieces.get(tag).getDirection().equals(Direction.VERTICAL) ||
             this.pieces.get(tag).getDirection().equals(Direction.BOTH)) {
                 moveDown = new Board(this);
-                // Block blockDown = moveDown.pieces.get(tag).nextBackward(moveDown);
-                // moveDown.pieces.get(tag).move(blockDown, moveDown);
                 moveDown.pieces.get(tag).moveBackward(moveDown);
                 moveDown.moveTag = tag;
                 moveDown.moveDirection = "DOWN";
@@ -199,8 +191,6 @@ public class Board {
             if (this.pieces.get(tag).getDirection().equals(Direction.HORIZONTAL) ||
             this.pieces.get(tag).getDirection().equals(Direction.BOTH)) {
                 moveRight = new Board(this);
-                // Block blockRight = moveRight.pieces.get(tag).nextBackward(moveRight);
-                // moveRight.pieces.get(tag).move(blockRight, moveRight);
                 moveRight.pieces.get(tag).moveBackward(moveRight);
                 moveRight.moveTag = tag;
                 moveRight.moveDirection = "RIGHT";
@@ -212,7 +202,7 @@ public class Board {
         if (moveDown != null) result.add(moveDown);
         if (moveLeft != null) result.add(moveLeft);
         if (moveRight != null) result.add(moveRight);
-        // for (Board b : result) System.out.println(b);
+        
         return result;
     }
     public ArrayList<Board> moveAllPieces() {
@@ -224,8 +214,9 @@ public class Board {
     }
         
     /* PRINT BOARD */
+    @Override
     public String toString() {
-        return this.toString(0);
+        return this.toStringColor(4);
     }
     public String toString(int indent) {
         String indentString = "";
@@ -245,6 +236,62 @@ public class Board {
         if (result.length() > 1) result = result.substring(0, result.length()-1);
         return result;
     }
+
+    /* PRINT BOARD WITH COLOR */
+    public String toStringColor(int indent) {
+        String indentString = "";
+        for (int i = 0; i < indent; i++) {
+            indentString = indentString + " ";
+        }
+        StringBuilder result = new StringBuilder();
+        result.append(Ansi.ansi().fg(Ansi.Color.YELLOW).a("[").a(this.moveTag).a("] ").a(this.moveDirection).reset()).append("\n");
+        
+        ArrayList<Block> highligtBlocks = new ArrayList<>();
+        if (this.moveTag != '\0') {
+            Piece movePiece = this.pieces.get(this.moveTag);
+            highligtBlocks.addAll(movePiece.getBlocks());
+            if (this.moveDirection.equals("UP") || this.moveDirection.equals("LEFT")) {
+                highligtBlocks.add(movePiece.nextBackward(this));
+            }
+            if (this.moveDirection.equals("DOWN") || this.moveDirection.equals("RIGHT")) {
+                highligtBlocks.add(movePiece.nextForward(this));
+            }
+        }
+
+        for (ArrayList<Block> mapRow : this.map) {
+            result.append(indentString);
+            for (Block blok : mapRow) {
+                String blokTag = String.valueOf(blok.getTag());
+                
+                // color
+                if (blok.getTag() == 'P') {
+                    blokTag = Ansi.ansi().fg(Ansi.Color.GREEN).a(Ansi.Attribute.INTENSITY_BOLD).a(blok.getTag()).reset().toString();
+                } else if (blok.getTag() == 'K') {
+                    blokTag = Ansi.ansi().fg(Ansi.Color.RED).a(blok.getTag()).reset().toString();
+                } else if (blok.getTag() == this.moveTag) {
+                    blokTag = Ansi.ansi().fg(Ansi.Color.BLUE).a(Ansi.Attribute.INTENSITY_BOLD).a(blok.getTag()).reset().toString();
+                }
+                
+                // highlight
+                if (highligtBlocks.contains(blok)) {
+                    blokTag = Ansi.ansi().bg(Ansi.Color.WHITE).a(blokTag).reset().toString();
+                    result.append(blokTag).append(Ansi.ansi().bg(Ansi.Color.WHITE).a(" ").reset());
+                } else {
+                    result.append(blokTag).append(" ");
+                }
+
+            }
+            if (result.length() > indentString.length()) {
+                result.deleteCharAt(result.length() - 1); // Hapus spasi terakhir di baris
+            }
+            result.append("\n");
+        }
+        if (result.length() > 0) {
+            result.deleteCharAt(result.length() - 1); // Hapus newline terakhir
+        }
+        return result.toString();
+    }
+
 
     /* ADDITIONAL */
     public ArrayList<Piece> getBlockingPieces() {

@@ -5,6 +5,8 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.fusesource.jansi.AnsiConsole;
+
 import model.*;
 import solver.algorithm.*;
 import solver.heuristic.*;
@@ -16,6 +18,7 @@ public class Main {
     public static void main(String[] args) throws InterruptedException {
         
         /* PREPARATION */
+        AnsiConsole.systemInstall();
         Scanner input = new Scanner(System.in);
         
         try {
@@ -155,9 +158,9 @@ public class Main {
             Home.Header();
             String realtimeChoice = null;
             while (realtimeChoice == null) {
-                System.out.println("[*] Aktifkan RealTime mode? (Y/N)");
-                System.out.println("[-] Note: mode ini dapat memperlambat eksekusi");
-                System.out.print("    >> ");
+                System.out.println  ("[*] Aktifkan RealTime mode? (Y/N)");
+                System.out.println  ("[-] Note: mode ini dapat memperlambat eksekusi");
+                System.out.print    ("    >> ");
                 realtimeChoice = input.nextLine().toUpperCase().trim();
                 if (!(  realtimeChoice.equals("Y") || 
                         realtimeChoice.equals("N"))) realtimeChoice = null;
@@ -178,7 +181,7 @@ public class Main {
             }
 
             /* PRINT RESULT */
-            DualOutput.activate("log.txt");
+            DualOutput.activate("output.txt");
             Home.Header();
             Home.Solution(solver, startTime);
             Home.Footer();
