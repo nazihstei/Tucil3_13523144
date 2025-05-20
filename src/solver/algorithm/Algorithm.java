@@ -50,11 +50,12 @@ public class Algorithm {
 
         // find goal
         BoardTree goal = this.tree.getGoal();
+        if (goal == null) return null;
 
         // tracing to root
         ArrayList<Board> result = new ArrayList<>();
         BoardTree node = goal;
-        while (!node.isRoot()) {
+        while (node != null && !node.isRoot()) {
             result.addFirst(node.getNode());
             node = node.getRoot();
         }
@@ -151,6 +152,8 @@ public class Algorithm {
         if (this.solution == null) {
             result.append(indentString).append("DON'T HAVE SOLUTION");
         } else if (this.solution.size() == 0) {
+            result.append(indentString).append("DON'T HAVE SOLUTION");
+        } else if (this.solution.size() == 1 && !this.solution.get(0).isSolved()) {
             result.append(indentString).append("DON'T HAVE SOLUTION");
         } else {
             for (Board step : this.solution) {

@@ -1,7 +1,7 @@
 x
 x
- ...CIHH..F
- BBBCI.G..F
- A..C..G..F
-KA.J...GDPP
- ..JLLL.D..
+ ...CIHH..
+ .BBCI.G..
+ A..C..G..
+KA.J...GPP
+ ..JLLL...

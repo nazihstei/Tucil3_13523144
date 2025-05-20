@@ -15,7 +15,10 @@ public class DistanceToExit extends Heuristic {
         Block goal = b.getGoal();
     
         // calculate manhattan distance
-        int distance = goal.ManhattanDistance(p.getHead());
+        int distance = Math.min(
+            goal.ManhattanDistance(p.getHead()), 
+            goal.ManhattanDistance(p.getTail()));
+            
         return Double.valueOf(distance);
     }
 

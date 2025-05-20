@@ -40,27 +40,33 @@ public class Home {
         System.out.println("[===========================================================]");
         System.out.println("[===============[   THIS IS YOUR SOLUTION   ]===============]");
         System.out.println("[===========================================================]");
-        if (animate && solver.getSolution() != null) {
-            while (true) {
-                for (Board b : solver.getSolution()) {
-                    Home.Header();
-                    if (solver.getSolution().getLast() == b) {
-                        System.out.printf("[*] Gerakan %d (SOLVED)\n", solver.getSolution().indexOf(b));
-                        System.out.println(b.toStringColor(4, false));
-                        Home.noSleepFooter();
-                        Thread.sleep(2000);
-                    } else {
-                        System.out.printf("[*] Gerakan %d\n", solver.getSolution().indexOf(b));
-                        System.out.println(b.toStringColor(4, false));
-                        Home.noSleepFooter();
-                        Thread.sleep(250);
+        if (animate && 
+        solver.getSolution() != null && 
+        solver.getSolution().size() > 0) {
+            try {
+                while (true) {
+                    for (Board b : solver.getSolution()) {
+                        Home.Header();
+                        if (b.isSolved()) {
+                            System.out.printf("[*] Gerakan %d (SOLVED)\n", solver.getSolution().indexOf(b));
+                            System.out.println(b.toStringColor(4, false));
+                            Home.noSleepFooter();
+                            Thread.sleep(2000);
+                        } else {
+                            System.out.printf("[*] Gerakan %d\n", solver.getSolution().indexOf(b));
+                            System.out.println(b.toStringColor(4, false));
+                            Home.noSleepFooter();
+                            Thread.sleep(250);
+                        }
+    
                     }
-
                 }
+            } catch (Exception e) {
+                Terminal.clearScreen();
             }
         } else {
             System.out.println(solver.toString(4, color));
-            if (color) {
+            if (color != null && color) {
                 Home.Footer();
             } else {
                 Home.noSleepFooter();

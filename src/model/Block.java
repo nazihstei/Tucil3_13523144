@@ -1,6 +1,6 @@
 package model;
 
-public class Block {
+public class Block implements Comparable<Block> {
 
     /* ATTRIBUTE */
     private char tag;
@@ -81,6 +81,26 @@ public class Block {
     @Override
     public String toString() {
         return String.format("(%c: %d, %d)", this.tag, this.row, this.col);
+    }
+
+    /* COMPARE */
+    @Override
+    public int compareTo(Block b) {
+        int rowDiff = this.row - b.row;
+        int colDiff = this.col - b.col;
+        if (rowDiff < 0) {
+            return -1;
+        } else if (rowDiff > 0) {
+            return 1;
+        } else {
+            if (colDiff < 0) {
+                return -1;
+            } else if (colDiff > 0) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
     }
 
 }

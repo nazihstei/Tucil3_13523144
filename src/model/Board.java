@@ -298,13 +298,13 @@ public class Board {
         if (primary.getDirection().equals(Direction.VERTICAL) || primary.getDirection().equals(Direction.BOTH)) {
             for (int i = primary.getHead().getRow(); i >= 0; i--) {
                 Block b = this.map.get(i).get(goal.getCol());
-                if (b.isPiece()) {
+                if (b.isPiece() && !b.isPrimary()) {
                     result.add(this.pieces.get(b.getTag()));
                 }
             }
             for (int i = primary.getTail().getRow(); i < this.row; i++) {
                 Block b = this.map.get(i).get(goal.getCol());
-                if (b.isPiece()) {
+                if (b.isPiece() && !b.isPrimary()) {
                     result.add(this.pieces.get(b.getTag()));
                 }
             }
@@ -312,13 +312,13 @@ public class Board {
         if (primary.getDirection().equals(Direction.HORIZONTAL) || primary.getDirection().equals(Direction.BOTH)) {
             for (int j = primary.getHead().getCol(); j >= 0; j--) {
                 Block b = this.map.get(goal.getRow()).get(j);
-                if (b.isPiece()) {
+                if (b.isPiece() && !b.isPrimary()) {
                     result.add(this.pieces.get(b.getTag()));
                 }
             }
             for (int j = primary.getTail().getCol(); j < this.col; j++) {
                 Block b = this.map.get(goal.getRow()).get(j);
-                if (b.isPiece()) {
+                if (b.isPiece() && !b.isPrimary()) {
                     result.add(this.pieces.get(b.getTag()));
                 }
             }

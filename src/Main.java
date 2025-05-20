@@ -51,7 +51,7 @@ public class Main {
                 Home.Header();
                 System.out.println("[*] Berikut adalah algorithma yang dapat dipilih:");
                 System.out.println("    [1] UCS  : Uniform Cost Search");
-                System.out.println("    [2] GBFS : Geedy Best-First Search");
+                System.out.println("    [2] GBFS : Greedy Best-First Search");
                 System.out.println("    [3] A*   : A star");
                 System.out.println("    [4] B&B  : Branch and Bound");
                 System.out.println();
@@ -93,7 +93,8 @@ public class Main {
                         System.out.println("    [1] Distance to Exit");
                         System.out.println("    [2] Count of Blocking Piece");
                         System.out.println("    [3] Solidness of Blocking Piece");
-                        System.out.println("    [4] Kombinasi dari heuristik di atas");
+                        System.out.println("    [4] Movement to Make Way");
+                        System.out.println("    [5] Kombinasi dari heuristik di atas");
                         System.out.println();
                         System.out.println("[*] Silahkan pilih heuristik yang ingin digunakan");
                         System.out.println("[-] Keterangan  : masukkan nomornya");
@@ -102,16 +103,17 @@ public class Main {
                         if (!(  heuristicInput.equals("1") || 
                         heuristicInput.equals("2") || 
                         heuristicInput.equals("3") || 
-                        heuristicInput.equals("4"))) heuristicInput = null;
-                        if (heuristicInput!=null && heuristicInput.equals("4")) {
+                        heuristicInput.equals("4") || 
+                        heuristicInput.equals("5"))) heuristicInput = null;
+                        if (heuristicInput!=null && heuristicInput.equals("5")) {
                             System.out.println();
                             System.out.println("[*] Silahkan pilih kombinasi heuristik yang ingin digunakan");
                             System.out.println("[+] Pilih juga bagaimana kombinasinya (MAX/MIN/SUM/AVG)");
-                            System.out.println("[-] format input: mode h1 h2 h3");
+                            System.out.println("[-] format input: mode h1 h2 h3 h4");
                             System.out.println("[-] Contoh      : MAX 1 3");
                             System.out.print  ("    >> ");
                             heuristicInput = input.nextLine().trim();
-                            Pattern pattern = Pattern.compile("^(MAX|MIN|SUM|AVG)\\s+(?:(?!([123])\\s+\\2\\s*$).*?(?:[123])(?:\\s+|$)){2,3}$");
+                            Pattern pattern = Pattern.compile("^(MAX|MIN|SUM|AVG)\\s+([1-4](?:\\s+[1-4]){0,3})$");
                             Matcher matcher  = pattern.matcher(heuristicInput);
                             if (!matcher.matches()) heuristicInput = null;
                         }
@@ -127,6 +129,7 @@ public class Main {
                 case "1" -> {heuristic = new DistanceToExit(); break;}
                 case "2" -> {heuristic = new BlockingPieceCount(); break;}
                 case "3" -> {heuristic = new SolidnessBlockingPiece(); break;}
+                case "4" -> {heuristic = new MovementToMakeWay(); break;}
                 case null-> {break;}
                 default  -> {
                     ArrayList<String> heuConf = new ArrayList<>(Arrays.asList(heuristicInput.split(" ")));
@@ -137,6 +140,7 @@ public class Main {
                             case "1" -> {h = new DistanceToExit(); break;}
                             case "2" -> {h = new BlockingPieceCount(); break;}
                             case "3" -> {h = new SolidnessBlockingPiece(); break;}
+                            case "4" -> {h = new MovementToMakeWay(); break;}
                         }
                         heuList[i] = h;
                     }

@@ -3,12 +3,13 @@ package model;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.PriorityQueue;
 
 
 public class Piece {
     
     /* CONST ENUMERATE */
-    enum Direction {
+    public enum Direction {
         VERTICAL,
         HORIZONTAL,
         BOTH
@@ -57,6 +58,11 @@ public class Piece {
             }
         }
     }
+    /* SORT PIECE BLOCKS */
+    public void sort() {
+        PriorityQueue<Block> temp = new PriorityQueue<>(this.blocks);
+        this.blocks = new ArrayDeque<>(temp);
+    }
 
     /* GETTER and SETTER */
     public char getTag() {
@@ -65,6 +71,7 @@ public class Piece {
     public void addBlock(Block b) {
         this.blocks.add(b);
         this.setDirection();
+        this.sort();
     }
 
     /* ADDITONAL GETTER */
@@ -82,8 +89,8 @@ public class Piece {
         Deque<Block> temp = new ArrayDeque<>();
         while (!this.blocks.isEmpty()) {
             Block b = this.blocks.poll();
-            result.add(b);
-            temp.add(b);
+            result.addLast(b);
+            temp.addLast(b);
         }
         this.blocks = temp;
         return result;
@@ -140,6 +147,7 @@ public class Piece {
             this.blocks.removeFirst();
             temp.addAll(this.moveForward(B).blocks);
             this.blocks = temp;
+            this.sort();
             return this;
         }
     }
@@ -159,6 +167,7 @@ public class Piece {
                 temp.addFirst(blok);
             }
             this.blocks = temp;
+            this.sort();
             return this;
         }
         

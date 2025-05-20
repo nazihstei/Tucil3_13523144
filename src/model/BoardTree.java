@@ -2,6 +2,7 @@ package model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.TreeSet;
 
 public class BoardTree implements Comparable<BoardTree> {
     
@@ -11,6 +12,7 @@ public class BoardTree implements Comparable<BoardTree> {
     private ArrayList<BoardTree> branches;
     private long depth;
     private static HashMap<BoardTree, ArrayList<BoardTree>> leaves = new HashMap<>();
+    private static HashMap<BoardTree, TreeSet<BoardTree>> trash = new HashMap<>();
 
     /* CONSTRUCTOR */
     public BoardTree(Board node) {
@@ -20,6 +22,7 @@ public class BoardTree implements Comparable<BoardTree> {
         this.branches = new ArrayList<>();
         BoardTree.leaves.put(this, new ArrayList<>());
         BoardTree.leaves.get(this).add(this);
+        BoardTree.trash.put(this, new TreeSet<>());
     }
     public BoardTree(Board node, BoardTree root) {
         this.root = root;
@@ -27,6 +30,7 @@ public class BoardTree implements Comparable<BoardTree> {
         this.depth = root.getDepth() + 1;
         this.branches = new ArrayList<>();
         BoardTree.leaves.get(this.getFirstRoot()).add(this);
+        BoardTree.trash.get(this.getFirstRoot()).add(this);
     }
 
     /* GETTER and SETTER */
@@ -76,8 +80,15 @@ public class BoardTree implements Comparable<BoardTree> {
     /* BRANCHES */
     public void addBranch(Board b) {
         if (b == null) return;
-        this.branches.add(new BoardTree(b, this));
-        if (BoardTree.leaves.containsKey(this)) BoardTree.leaves.get(this).remove(this);
+        int sizeBefore = BoardTree.trash.get(this.getFirstRoot()).size();
+        BoardTree newBranch = new BoardTree(b, this);
+        int sizeAfter = BoardTree.trash.get(this.getFirstRoot()).size();
+        // System.err.println(BoardTree.trash);
+        if (sizeAfter > sizeBefore) {
+            this.branches.add(newBranch);
+            // if (BoardTree.leaves.containsKey(this)) BoardTree.leaves.get(this).remove(this);
+            if (BoardTree.leaves.containsKey(this.getFirstRoot())) BoardTree.leaves.get(this.getFirstRoot()).remove(this);
+        }
     }
     public void addBranches(ArrayList<Board> data) {
         if (data == null) return;
