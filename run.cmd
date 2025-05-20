@@ -4,14 +4,17 @@
 @REM cd ./bin
 @REM CALL java -cp .:lib/jansi-2.4.0.jar Main
 
-:: Cari semua file .java
+@REM Clear bin
+rmdir /s /q "bin/"
+
+@REM Cari semua file .java
 dir /s /b src\*.java > sources.txt
 
-:: Compile semua file ke bin/
+@REM Compile semua file ke bin/
 javac -d bin -cp bin @sources.txt
 
-:: Hapus file sementara
+@REM Hapus file sementara
 del sources.txt
 
-:: Jalankan program utama
+@REM Jalankan program utama
 java -Xss4m -Xmx8g -cp bin Main

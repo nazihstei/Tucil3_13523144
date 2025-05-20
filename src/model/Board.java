@@ -126,10 +126,20 @@ public class Board {
         int c = this.goal.getCol();
         int R = this.row-1;
         int C = this.col-1;
-        return  (r == 0 && this.map.get(r+1).get(c).isValid()) ||
-                (r == R && this.map.get(r-1).get(c).isValid()) ||
-                (c == 0 && this.map.get(r).get(c+1).isValid()) ||
-                (c == C && this.map.get(r).get(c-1).isValid());
+        Direction dir = this.getPrimaryPiece().getDirection();
+        int pr = this.getPrimaryPiece().getHead().getRow();
+        int pc = this.getPrimaryPiece().getHead().getCol();
+        
+        Boolean positionValid =  
+            (r == 0 && this.map.get(r+1).get(c).isValid()) ||
+            (r == R && this.map.get(r-1).get(c).isValid()) ||
+            (c == 0 && this.map.get(r).get(c+1).isValid()) ||
+            (c == C && this.map.get(r).get(c-1).isValid());
+        Boolean primaryValid = 
+            (dir.equals(Direction.HORIZONTAL) && r == pr) ||
+            (dir.equals(Direction.VERTICAL) && c == pc);
+        
+            return positionValid && primaryValid;
     }
     public Boolean isSolved() {
         if (!this.isExitValid()) return false;
@@ -215,8 +225,17 @@ public class Board {
         
     /* PRINT BOARD */
     public String toString() {
-        String result = String.format("[ %c ] %s\n", this.moveTag, this.moveDirection);
+        return this.toString(0);
+    }
+    public String toString(int indent) {
+        String indentString = "";
+        for (int i = 0; i < indent; i++) {
+            indentString = indentString + " ";
+        }
+        String result = "";
+        result = result + String.format("[%c] %s\n", this.moveTag, this.moveDirection);
         for (ArrayList<Block> mapRow : this.map) {
+            result = result + indentString;
             for (Block blok : mapRow) {
                 result = result + blok.getTag() + " ";
             }
@@ -224,11 +243,6 @@ public class Board {
             result = result + "\n";
         }
         if (result.length() > 1) result = result.substring(0, result.length()-1);
-        // String pieces = "";
-        // for (Character k : this.pieces.keySet()) {
-        //     pieces = pieces + this.pieces.get(k).toString() + "\n";
-        // }
-        // return pieces + result;
         return result;
     }
 

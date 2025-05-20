@@ -20,23 +20,25 @@ public class Main {
         
         try {
             /* LOAD CONFIGURATION FILE */
+            Thread.sleep(0);
             Board rootBoard = null;
             while (rootBoard == null) {
                 Home.Header();
                 System.out.println("[*] Silahkan masukkan file konfigurasi");
                 System.out.print  ("    >> ");
                 String filepath = "./test/" + input.nextLine() + ".txt";
+                System.out.println();
                 System.out.println("[*] Memuat konfigurasi ...");
+                Thread.sleep(1000);
                 rootBoard = FileHandler.loadFile(filepath);
-                // Home.Footer();
+                if (rootBoard!= null && !rootBoard.isExitValid()) {
+                    System.err.println("[X] EXIT TIDAK VALID");
+                    rootBoard = null;
+                }
+                Home.Footer();
             }
-            // Home.Header();
+            Home.Header();
             System.out.println("[*] Konfigurasi berhasil dimuat!");
-            if (!rootBoard.isExitValid()) {
-                System.err.println("EXIT TIDAK VALID");
-                System.out.println(rootBoard);
-                Thread.sleep(5000);
-            }
             Home.Footer();
             
             /* INPUT ALGORITHM AND HAURISTIC */
@@ -150,52 +152,46 @@ public class Main {
             }
             
             /* RUN SOLVER */
+            Home.Header();
+            String realtimeChoice = null;
+            while (realtimeChoice == null) {
+                System.out.println("[*] Aktifkan RealTime mode? (Y/N)");
+                System.out.println("[-] Note: mode ini dapat memperlambat eksekusi");
+                System.out.print("    >> ");
+                realtimeChoice = input.nextLine().toUpperCase().trim();
+                if (!(  realtimeChoice.equals("Y") || 
+                        realtimeChoice.equals("N"))) realtimeChoice = null;
+            }
+            long startTime = 0;
+            switch (realtimeChoice) {
+                case "Y" -> {
+                    startTime = System.currentTimeMillis();
+                    solver.solve(true);
+                }
+                case "N" -> {
+                    Home.Header();
+                    System.out.println("[*] Please Wait ...");
+                    Home.Footer();
+                    startTime = System.currentTimeMillis();
+                    solver.solve(false);
+                }
+            }
+
+            /* PRINT RESULT */
             DualOutput.activate("log.txt");
             Home.Header();
-            long startTime = System.currentTimeMillis();
-            solver.solve();
-            long endTime = System.currentTimeMillis();
-            long duration = endTime - startTime;
-            System.out.println();
-            System.out.println(solver);
-            System.out.println();
-            System.out.println(    "[*] Berikut adalah informasi pencarian");
-            System.out.printf("    [+] Node Count  : %d node\n", solver.getTree().nodeCount());
-            System.out.printf("    [+] Duration    : %d ms\n", duration);
+            Home.Solution(solver, startTime);
             Home.Footer();
-            DualOutput.deactivate();
-            
+
         } catch (Exception e) {
             e.printStackTrace();
             
         } finally {
-            // Home.Header();
             /* TERMINATION */
             DualOutput.deactivate();  
             input.close();
-            // Home.Footer();
         }
     }
 }
 
-/* ADDITIONAL STATIC METHOD */
-class Home {
-    public static void Header() {
-        Terminal.clearScreen();
-        System.out.println();
-        System.out.println("[===========================================================]");
-        System.out.println("[===============[  Rush Hour Solver Master  ]===============]");
-        System.out.println("[===========================================================]");
-        System.out.println("[     Selamat datang di Solver permainan Rush Hour no.1     ]");
-        System.out.println("[  di dunia. Terdapat pilihan algorithma yang keren dengan  ]");
-        System.out.println("[  beragam pilihan heuristik yang menarik. Selamat mencoba! ]");
-        System.out.println("[===========================================================]");
-        System.out.println();
-        System.out.println(MemoryInfo.get());
-    }
-    public static void Footer() throws InterruptedException {
-        System.out.println();
-        System.out.println("[===========================================================]");
-        // Thread.sleep(1000);
-    }
-}
+

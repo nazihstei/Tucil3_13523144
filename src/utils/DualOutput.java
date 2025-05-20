@@ -20,7 +20,7 @@ public class DualOutput {
                 dualOut = new PrintStream(new DualOutputStream(originalOut, fileOut));
                 System.setOut(dualOut);
                 isActive = true;
-                System.out.println("[DualOutput] Dual output activated. Logging to console and: " + filePath);
+                // System.out.println("[DualOutput] Dual output activated. Logging to console and: " + filePath);
             } catch (FileNotFoundException e) {
                 System.err.println("[DualOutput] Error activating dual output: " + e.getMessage());
             }
@@ -38,7 +38,7 @@ public class DualOutput {
             dualOut = null;
             fileOut = null;
             isActive = false;
-            System.out.println("[DualOutput] Dual output deactivated.");
+            // System.out.println("[DualOutput] Dual output deactivated.");
         } else {
             System.out.println("[DualOutput] Dual output is not active.");
         }

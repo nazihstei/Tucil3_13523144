@@ -18,7 +18,7 @@ public class FileHandler {
             ArrayList<String> fileRows = new ArrayList<>(tempList.subList(2, tempList.size()));
             return new Board(fileRows);
         } catch (IOException e) {
-            System.err.println("[X] Terjadi kesalahan saat membaca file: " + e.getMessage());
+            System.err.println("[X] ERROR ketika membaca file: " + e.getMessage());
             return null;
         }
     }

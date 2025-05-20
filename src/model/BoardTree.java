@@ -92,6 +92,20 @@ public class BoardTree implements Comparable<BoardTree> {
         ArrayList<Board> nextMovement = this.node.moveAllPieces();
         this.addBranches(nextMovement);
     }
+    public BoardTree getGoal() {
+        // find goal in leaf
+        BoardTree goal = null;
+        for (BoardTree leaf : BoardTree.getLeaves(this)) {
+            if (leaf.getNode().isSolved()) {
+                if (goal == null) {
+                    goal = leaf;
+                } else if (leaf.getDepth() <= goal.getDepth()) {
+                    goal = leaf;
+                }
+            }
+        }
+        return goal;
+    }
 
     /* COMPARE */
     @Override

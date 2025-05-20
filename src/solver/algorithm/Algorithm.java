@@ -9,6 +9,7 @@ import java.util.TreeSet;
 
 import model.Board;
 import model.BoardTree;
+import utils.Home;
 
 public class Algorithm {
     
@@ -39,35 +40,16 @@ public class Algorithm {
     public BoardTree getTree() {
         return this.tree;
     }
+    public ArrayList<Board> getSolution() {
+        return this.solution;
+    }
 
     /* SOLVER */
-    public ArrayList<Board> solve() {
-        Boolean hasSolution = this.solver();
-        if (hasSolution == false) {
-            System.err.println("DON'T HAVE SOLUTION");
-            return null;
-        }
+    public ArrayList<Board> solve(Boolean debug) {
+        this.solver(System.currentTimeMillis(), debug);
 
-        // find goal in leaf
-        BoardTree goal = null;
-        for (BoardTree leaf : BoardTree.getLeaves(this.tree)) {
-            if (leaf.getNode().isSolved()) {
-                if (goal == null) {
-                    goal = leaf;
-                } else if (leaf.getDepth() < goal.getDepth()) {
-                    goal = leaf;
-                }
-            }
-        }
-
-        if (goal == null) {
-            System.err.println("GOAL RESULT IS NULL");
-            try {
-               Thread.sleep(10000);
-           } catch (InterruptedException e) {
-               e.printStackTrace();
-           }
-        }
+        // find goal
+        BoardTree goal = this.tree.getGoal();
 
         // tracing to root
         ArrayList<Board> result = new ArrayList<>();
@@ -80,7 +62,7 @@ public class Algorithm {
         this.solution = result;
         return result;
     }
-    public Boolean solver() {
+    public Boolean solver(long startDuration, Boolean debug) {
 
         if (this.tree == null) {
             return false;
@@ -93,9 +75,10 @@ public class Algorithm {
         while (!this.queue.isEmpty()) {
             b = this.queue.poll();
 
-            // System.out.println("depth: " + b.getDepth());
-            // System.out.println(b.getNode());
-            // System.out.println();
+            // DEBUG
+            if (debug) {
+                printSolverState(b, this, startDuration);
+            }
 
             if (b.getNode().isSolved()) {
                 break;
@@ -154,36 +137,37 @@ public class Algorithm {
 
     /* PRINT RESULT */
     public String toString() {
-        if (this.solution == null) {
-            System.err.println("ERROR: SOLUTION IS NULL");
-            try {
-                Thread.sleep(10000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        if (this.solution.size() == 0) {
-            System.err.println("ERROR: SOLUTION IS EMPTY");
-            try {
-                Thread.sleep(10000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        if (this.tree == null) {
-            System.err.println("ERROR: TREE IS NULL");
-            try {
-                Thread.sleep(10000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        String result = "";
+        return this.toString(0);
+    }
+    public String toString(int indent) {
         
-        for (Board step : this.solution) {
-            result = result + String.format("\n\nGerakan %d :\n%s", this.solution.indexOf(step), step.toString());
+        String result = "";
+        String indentString = "";
+        for (int i = 0; i < indent; i++) {
+            indentString = indentString + " ";
+        }
+        
+        if (this.solution == null) {
+            result = indentString + "DON'T HAVE SOLUTION";
+        } else if (this.solution.size() == 0) {
+            result = indentString + "DON'T HAVE SOLUTION";
+        } else {
+            for (Board step : this.solution) {
+                result = result + String.format("\nGerakan %d\n", this.solution.indexOf(step));
+                result = result + step.toString(indent) + "\n";
+            }
+            if (result.length() > 1) result = result.substring(0, result.length()-1);
         }
         
         return result;
+    }
+
+    /* STATIC METHOD */
+    public void printSolverState(BoardTree checkedNode, Algorithm solver, long startDuration) {
+        try {
+            Home.Loading(checkedNode, solver, startDuration);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
