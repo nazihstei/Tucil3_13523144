@@ -216,7 +216,7 @@ public class Board {
     /* PRINT BOARD */
     @Override
     public String toString() {
-        return this.toStringColor(4);
+        return this.toStringColor(4, true);
     }
     public String toString(int indent) {
         String indentString = "";
@@ -238,7 +238,7 @@ public class Board {
     }
 
     /* PRINT BOARD WITH COLOR */
-    public String toStringColor(int indent) {
+    public String toStringColor(int indent, Boolean highlight) {
         String indentString = "";
         for (int i = 0; i < indent; i++) {
             indentString = indentString + " ";
@@ -273,16 +273,14 @@ public class Board {
                 }
                 
                 // highlight
-                if (highligtBlocks.contains(blok)) {
-                    blokTag = Ansi.ansi().bg(Ansi.Color.WHITE).a(blokTag).reset().toString();
-                    result.append(blokTag).append(Ansi.ansi().bg(Ansi.Color.WHITE).a(" ").reset());
+                if (highlight && highligtBlocks.contains(blok)) {
+                    blokTag = Ansi.ansi().fg(Ansi.Color.BLACK).bg(Ansi.Color.WHITE).a(blokTag).reset().toString();
+                    String space = Ansi.ansi().bg(Ansi.Color.WHITE).a(" ").reset().toString();
+                    result.append(blokTag).append(space);
                 } else {
                     result.append(blokTag).append(" ");
                 }
 
-            }
-            if (result.length() > indentString.length()) {
-                result.deleteCharAt(result.length() - 1); // Hapus spasi terakhir di baris
             }
             result.append("\n");
         }

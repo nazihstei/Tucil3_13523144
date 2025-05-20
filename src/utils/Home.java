@@ -1,5 +1,6 @@
 package utils;
 
+import model.Board;
 import model.BoardTree;
 import solver.algorithm.Algorithm;
 
@@ -29,18 +30,44 @@ public class Home {
         Home.printSearchInfo(checkedNode, solver, startDuration);
         Home.noSleepFooter();
     }
-    public static void Solution(Algorithm solver, long startDuration) throws InterruptedException {
+    public static void Solution(Algorithm solver, long duration, Boolean color, Boolean animate) throws InterruptedException {
+        Home.Header();
         System.out.println(    "[*] Berikut adalah informasi pencarian");
         System.out.printf("    [+] Node Count  : %d node\n", solver.getTree().nodeCount());
         System.out.printf("    [+] Max Depth   : %d level\n", solver.getTree().getMaxDepth());
-        System.out.printf("    [+] Duration    : %d ms\n", System.currentTimeMillis() - startDuration);
+        System.out.printf("    [+] Duration    : %d ms\n", duration);
         System.out.println();
         System.out.println("[===========================================================]");
         System.out.println("[===============[   THIS IS YOUR SOLUTION   ]===============]");
         System.out.println("[===========================================================]");
-        System.out.println(solver);
+        if (animate && solver.getSolution() != null) {
+            while (true) {
+                for (Board b : solver.getSolution()) {
+                    Home.Header();
+                    if (solver.getSolution().getLast() == b) {
+                        System.out.printf("[*] Gerakan %d (SOLVED)\n", solver.getSolution().indexOf(b));
+                        System.out.println(b.toStringColor(4, false));
+                        Home.noSleepFooter();
+                        Thread.sleep(2000);
+                    } else {
+                        System.out.printf("[*] Gerakan %d\n", solver.getSolution().indexOf(b));
+                        System.out.println(b.toStringColor(4, false));
+                        Home.noSleepFooter();
+                        Thread.sleep(250);
+                    }
+
+                }
+            }
+        } else {
+            System.out.println(solver.toString(4, color));
+            if (color) {
+                Home.Footer();
+            } else {
+                Home.noSleepFooter();
+            }
+        }
     }
-    
+
     /* PRIVATE METHOD */
     private static void noSleepFooter() {
         System.out.println();

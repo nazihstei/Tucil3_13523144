@@ -81,8 +81,8 @@ public class Main {
                         if (!(  useHeuristicChoice.equals("Y") || 
                                 useHeuristicChoice.equals("N"))) useHeuristicChoice = null;
                     }
+                    Home.Footer();
                     if (useHeuristicChoice.equals("N")) {
-                        Home.Footer();
                         break;
                     }
                 default :
@@ -179,19 +179,32 @@ public class Main {
                     solver.solve(false);
                 }
             }
+            long endTime = System.currentTimeMillis();
+            long durantion = endTime - startTime;
 
-            /* PRINT RESULT */
-            DualOutput.activate("output.txt");
+            /* PRINT OUTPUT TO FILE */
             Home.Header();
-            Home.Solution(solver, startTime);
+            System.out.println("[*] Menulis ke file output.txt ...");
             Home.Footer();
+            DualOutput.activate("output.txt");
+            Home.Solution(solver, durantion, false, false);
+            DualOutput.deactivate();
+
+            /* PRINT RESULT TO TERMINAL */
+            Home.Solution(solver, durantion, true, false);
+            System.out.println();
+            System.out.print("Ketik enter untuk menutup tampilan");
+            input.nextLine();
+
+            /* PRINT RESULT ANIMATION */
+            Home.Solution(solver, durantion, null, true);
 
         } catch (Exception e) {
+            DualOutput.deactivate();  
             e.printStackTrace();
             
         } finally {
             /* TERMINATION */
-            DualOutput.deactivate();  
             input.close();
         }
     }

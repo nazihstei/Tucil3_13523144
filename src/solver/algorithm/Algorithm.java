@@ -154,9 +154,9 @@ public class Algorithm {
             result.append(indentString).append("DON'T HAVE SOLUTION");
         } else {
             for (Board step : this.solution) {
-                result.append(String.format("\nGerakan %d\n", this.solution.indexOf(step)));
+                result.append(String.format("\n[*] Gerakan %d\n", this.solution.indexOf(step)));
                 if (color) {
-                    result.append(step.toStringColor(indent));
+                    result.append(step);
                 } else {
                     result.append(step.toString(indent));
                 }
