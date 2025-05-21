@@ -1,6 +1,7 @@
-x
-x
-.....
-..A..
-..APPK
-..A..
+5 5
+7
+FF.AD
+.PPADK
+EGGA.
+E..BB
+E..CC

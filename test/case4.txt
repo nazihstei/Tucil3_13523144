@@ -1,6 +1,8 @@
-x
-x
- ...LLHH..
- A..C..G..
-KA..CI.GPP
- .BB.I....
+6 6
+9
+A.BCCC
+A.BD..
+APPD..K
+EEFF.G
+.....G
+HHII.G

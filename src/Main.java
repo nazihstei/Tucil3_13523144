@@ -28,8 +28,8 @@ public class Main {
             while (rootBoard == null) {
                 Home.Header();
                 System.out.println("[*] Silahkan masukkan file konfigurasi");
-                System.out.print  ("    >> ");
-                String filepath = "./test/" + input.nextLine() + ".txt";
+                System.out.print  ("    >> ./test/");
+                String filepath = "./test/" + input.nextLine();
                 System.out.println();
                 System.out.println("[*] Memuat konfigurasi ...");
                 Thread.sleep(1000);

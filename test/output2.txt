@@ -1,0 +1,20 @@
+[H[2J
+[===========================================================]
+[===============[  RUSH HOUR SOLVER MASTER  ]===============]
+[===========================================================]
+[     Selamat datang di Solver permainan Rush Hour no.1     ]
+[  di dunia. Terdapat pilihan algorithma yang keren dengan  ]
+[  beragam pilihan heuristik yang menarik. Selamat mencoba! ]
+[===========================================================]
+
+[*] Berikut adalah informasi pencarian
+    [+] Node Count  : 4 node
+    [+] Max Depth   : 2 level
+    [+] Duration    : 30 ms
+
+[===========================================================]
+[===============[   THIS IS YOUR SOLUTION   ]===============]
+[===========================================================]
+    DON'T HAVE SOLUTION
+
+[===========================================================]
