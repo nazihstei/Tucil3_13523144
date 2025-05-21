@@ -1,7 +1,6 @@
 x
 x
- ...CIHH..
- .BBCI.G..
+ ...LLHH..
  A..C..G..
-KA.J...GPP
- ..JLLL...
+KA..CI.GPP
+ .BB.I....

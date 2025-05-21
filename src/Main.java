@@ -191,17 +191,18 @@ public class Main {
             System.out.println("[*] Menulis ke file output.txt ...");
             Home.Footer();
             DualOutput.activate("output.txt");
-            Home.Solution(solver, durantion, false, false);
+            Home.Solution(solver, durantion, false);
             DualOutput.deactivate();
 
             /* PRINT RESULT TO TERMINAL */
-            Home.Solution(solver, durantion, true, false);
+            Home.Solution(solver, durantion, true);
             System.out.println();
-            System.out.print("Ketik enter untuk menutup tampilan");
+            System.out.println  ("[*] Tekan enter untuk menampilkan CLI animation");
+            System.out.print    ("    >> ");
             input.nextLine();
 
             /* PRINT RESULT ANIMATION */
-            Home.Solution(solver, durantion, null, true);
+            Home.AnimateSolution(solver, durantion);
 
         } catch (Exception e) {
             DualOutput.deactivate();  
